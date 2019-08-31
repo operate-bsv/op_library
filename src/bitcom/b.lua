@@ -4,12 +4,23 @@ parameters. This function always creates a new context.
 
 ## Examples
 
-    TODO
+    OP_RETURN
+      $REF
+        "Hello world"
+        "text/plain"
+        "utf8"
+        "example.txt"
+    # {
+    #   data: "Hello world",
+    #   encoding: "utf8",
+    #   name: "example.txt"
+    #   type: "text/plain",
+    # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
-function main(_ctx, data, mediatype, encoding, name)
+return function(_ctx, data, mediatype, encoding, name)
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''
@@ -20,7 +31,7 @@ function main(_ctx, data, mediatype, encoding, name)
     'Invalid file parameters.')
 
   -- Build the file object
-  file = {
+  local file = {
     data = data,
     type = mediatype,
     encoding = encoding,

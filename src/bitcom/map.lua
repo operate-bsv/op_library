@@ -8,15 +8,33 @@ changes.
 
 ## Examples
 
-    TODO
+    OP_RETURN
+      $REF
+        "SET"
+        "user.name"
+        "Joe Bloggs"
+        "user.age"
+        20
+    # {
+    #   user: {
+    #     age: 20,
+    #     name: "Joe Bloggs"
+    #   },
+    #   _MAP: {
+    #     PUT: {
+    #       "user.age": 20,
+    #       "user.name": 10
+    #     }
+    #   }
+    # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]
-function main(ctx, mode, ...)
+return function(ctx, mode, ...)
   ctx = ctx or {}
-  obj = {}
-  mode = string.upper(mode or '')
+  local obj = {}
+  local mode = string.upper(mode or '')
   assert(
     type(ctx) == 'table',
     'Invalid context type.')

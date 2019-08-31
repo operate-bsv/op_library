@@ -8,14 +8,33 @@ table until the value is set on the tip.
 
 ## Examples
 
-    TODO
+    OP_RETURN
+      $REF
+        "user.profile"
+        "name"
+        "Joe Bloggs"
+        |
+      $REF
+        "account"
+        "name"
+        "Acme Corp"
+    # {
+    #   account: {
+    #     name: "Acme Corp"
+    #   },
+    #   user: {
+    #     profile: {  
+    #       name: "Joe Bloggs,
+    #     }
+    #   }
+    # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
-function main(ctx, path, ...)
+return function(ctx, path, ...)
   ctx = ctx or {}
-  obj = {}
+  local obj = {}
   assert(
     type(ctx) == 'table',
     'Invalid context. Must receive a table.')

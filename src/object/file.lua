@@ -4,12 +4,19 @@ ignored and a new context created.
 
 ## Examples
 
-    TODO
+    OP_RETURN
+      $REF
+        "text/plain"
+        "Hello world"
+    # {
+    #   data: "Hello world",
+    #   type: "text/plain"
+    # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
-function main(_ctx, mediatype, data)
+return function(_ctx, mediatype, data)
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''

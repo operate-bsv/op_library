@@ -8,12 +8,30 @@ table until the value is set on the tip.
 
 ## Examples
 
-    TODO
+    OP_RETURN
+      $REF
+        "user.name"
+        "Joe Bloggs"
+        "user.age"
+        20
+        |
+      $REF
+        "user.email"
+        "joe@example.com"
+        "user.age"
+        24
+    # {
+    #   user: {
+    #     age: 10,
+    #     email: "joe@example.com",
+    #     name: "Joe Bloggs"
+    #   }
+    # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
-function main(ctx, ...)
+return function(ctx, ...)
   ctx = ctx or {}
   assert(
     type(ctx) == 'table',
