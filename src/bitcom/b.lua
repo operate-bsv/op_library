@@ -1,6 +1,6 @@
 --[[
 Implements the B:// protocal and creates a file object using the given
-parameters. This function always creates a new context. 
+parameters.
 
 ## Examples
 
@@ -17,10 +17,15 @@ parameters. This function always creates a new context.
     #   type: "text/plain",
     # }
 
-@version 0.0.2
+@version 0.0.3
 @author Libs
 ]]--
-return function(_ctx, data, mediatype, encoding, name)
+return function(ctx, data, mediatype, encoding, name)
+  local file = ctx or {}
+  assert(
+    type(file) == 'table',
+    'Invalid context. Must receive a table.')
+
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''
@@ -31,12 +36,10 @@ return function(_ctx, data, mediatype, encoding, name)
     'Invalid file parameters.')
 
   -- Build the file object
-  local file = {
-    data = data,
-    type = mediatype,
-    encoding = encoding,
-    name = name
-  }
+  file.data = data
+  file.type = mediatype
+  file.encoding = encoding
+  file.name = name
 
   -- Nullify blank attributes
   if isblank(file.type) then file.type = nil end

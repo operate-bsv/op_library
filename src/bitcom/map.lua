@@ -30,7 +30,7 @@ changes.
 
 @version 0.0.2
 @author Libs
-]]
+]]--
 return function(ctx, mode, ...)
   ctx = ctx or {}
   local obj = {}

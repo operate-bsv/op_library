@@ -1,6 +1,5 @@
 --[[
-Creates a simple file object using the given parameters. Any previous context is
-ignored and a new context created.
+Creates a simple file object using the given parameters.
 
 ## Examples
 
@@ -13,10 +12,15 @@ ignored and a new context created.
     #   type: "text/plain"
     # }
 
-@version 0.0.2
+@version 0.0.3
 @author Libs
 ]]--
-return function(_ctx, mediatype, data)
+return function(ctx, mediatype, data)
+  local file = ctx or {}
+  assert(
+    type(file) == 'table',
+    'Invalid context. Must receive a table.')
+
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''
@@ -27,10 +31,8 @@ return function(_ctx, mediatype, data)
     'Invalid file parameters.')
 
   -- Build the file object
-  file = {
-    data = data,
-    type = mediatype
-  }
+  file.data = data
+  file.type = mediatype
 
   return file
 end
