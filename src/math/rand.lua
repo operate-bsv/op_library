@@ -1,6 +1,6 @@
 --[[
-Generates the specified number of unique 64-bit doubles. If no number
-parameter is given, one single random number is returned.
+Generates the specified number of random 64-bit doubles. If no number
+parameter is given, one random number is returned.
 
 ## Examples
 
@@ -9,13 +9,12 @@ parameter is given, one single random number is returned.
         "2"
     # [0.8900582807863565, 0.6963011994435739]
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
 return function(ctx, n)
   ctx = ctx or {}
   n = tonumber(n) or 1
-  local nums = {}
   assert(
     type(ctx) == 'table',
     'Invalid context. Must receive a table.')
@@ -24,18 +23,9 @@ return function(ctx, n)
   local seed = tonumber(tx.txid, 16)
   math.randomseed(seed)
 
-  -- Local helper method to generate unique random number
-  local function unique_random(nums)
-    local n = math.random()
-    if nums[n] then n = unique_random(nums, min, max) end
-    return n
-  end
-
   -- Iterate from 1 to n, adding unique random numbers to the context
   for i = 1, n do
     local num = math.random()
-    if nums[num] then num = math.random() end
-    nums[num] = num
     table.insert(ctx, num)
   end
 
