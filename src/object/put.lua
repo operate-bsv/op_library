@@ -1,6 +1,6 @@
 --[[
-Extends the context table by placing the given values at the given keys
-(overriding values where keys already exist).
+Extends the context table at the given path, and puts a new object from the
+given keys and values (overriding values where keys already exist).
 
 Takes a variable length number of arguments and maps them into key value pairs.
 Where a key is a path seperated by `.`, the table is traversed creating a nested
@@ -10,17 +10,15 @@ table until the value is set on the tip.
 
     OP_RETURN
       $REF
-        "user.profile"
+        "user"
         "name"
         "Joe Bloggs"
         "age"
         20
     # {
     #   user: {
-    #     profile: {
-    #       name: "Joe Bloggs,
-    #       age: 20
-    #     }
+    #     age: 20,
+    #     name: "Joe Bloggs"
     #   }
     # }
 

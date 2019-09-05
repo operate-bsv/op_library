@@ -23,7 +23,7 @@ changes.
     #   _MAP: {
     #     PUT: {
     #       "user.age": 20,
-    #       "user.name": 10
+    #       "user.name": "Joe Bloggs"
     #     }
     #   }
     # }

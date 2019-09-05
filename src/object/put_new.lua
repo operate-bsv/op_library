@@ -1,6 +1,7 @@
 --[[
-Extends the context table by placing the given values at the given keys
-unless the key already exists.
+Creates a new object and places the context at the given path. The object is
+extended by placing the given values at the given keys unless the key already
+exists. Effectively the inverse of `object/put`.
 
 Takes a variable length number of arguments and maps them into key value pairs.
 Where a key is a path seperated by `.`, the table is traversed creating a nested
@@ -10,26 +11,20 @@ table until the value is set on the tip.
 
     OP_RETURN
       $REF
-        "user.profile"
-        "name"
-        "Joe Bloggs"
-        |
-      $REF
         "account"
-        "name"
-        "Acme Corp"
+        "user.name"
+        "Joe Bloggs"
+        "user.age"
+        20
     # {
-    #   account: {
-    #     name: "Acme Corp"
-    #   },
+    #   account: {...},
     #   user: {
-    #     profile: {  
-    #       name: "Joe Bloggs,
-    #     }
+    #     age: 20,
+    #     name: "Joe Bloggs"
     #   }
     # }
 
-@version 0.0.2
+@version 0.0.3
 @author Libs
 ]]--
 return function(ctx, path, ...)
@@ -59,8 +54,11 @@ return function(ctx, path, ...)
     end
   end
 
+  -- Extend new object with context
+  extend_new(obj, path, ctx)
+
   -- Iterrate over each vararg pair to get the path and value
-  -- Unless path is blank, the PUT object is extended
+  -- Unless path is blank, the context is extended
   for n = 1, select('#', ...) do
     if math.fmod(n, 2) > 0 then
       local path = select(n, ...)
@@ -71,7 +69,5 @@ return function(ctx, path, ...)
     end
   end
 
-  -- Extend the context
-  extend_new(ctx, path, obj)
-  return ctx
+  return obj
 end

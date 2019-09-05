@@ -1,10 +1,10 @@
 --[[
-Extends the context table by placing the given values at the given keys
-unless the key already exists.
+Extends the context object by placing the given values at the given keys
+unless the key already exists. Effectively the inverse of `object/extend`.
 
 Takes a variable length number of arguments and maps them into key value pairs.
-Where a key is a path seperated by `.`, the table is traversed creating a nested
-table until the value is set on the tip.
+Where a key is a path seperated by `.`, the object is traversed, creating a
+deeply nested object object until the value is set on the tip.
 
 ## Examples
 
@@ -22,7 +22,7 @@ table until the value is set on the tip.
         24
     # {
     #   user: {
-    #     age: 10,
+    #     age: 20,
     #     email: "joe@example.com",
     #     name: "Joe Bloggs"
     #   }
