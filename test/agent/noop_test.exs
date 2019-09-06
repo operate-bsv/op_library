@@ -3,15 +3,15 @@ defmodule Agent.NoopTest do
 
   setup_all do
     %{
-      vm: FB.VM.init,
+      vm: FBAgent.VM.init,
       script: File.read!("src/agent/noop.lua")
     }
   end
 
   test "must return the same context", ctx do
     context = %{"foo" => "bar", "baz" => "qux"}
-    res = %FB.Cell{script: ctx.script, params: ["foo", "bar", "baz"]}
-      |> FB.Cell.exec!(ctx.vm, context: context)
+    res = %FBAgent.Cell{script: ctx.script, params: ["foo", "bar", "baz"]}
+      |> FBAgent.Cell.exec!(ctx.vm, context: context)
     assert res == context
   end
 
