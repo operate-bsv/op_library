@@ -1,4 +1,4 @@
-defmodule Bitcom.EncryptedPartTest do
+defmodule Bitpaste.EncryptedPartTest do
   use ExUnit.Case
 
   setup_all do
@@ -7,7 +7,7 @@ defmodule Bitcom.EncryptedPartTest do
       script: File.read!("src/bitpaste/encrypted_part.lua")
     }
   end
-  
+
 
   describe "with dummy data" do
     test "must parse the data", ctx do
