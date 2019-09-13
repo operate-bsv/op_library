@@ -3,7 +3,7 @@
   "bsv": {:git, "https://github.com/libitx/bsv-ex.git", "3c870802d2ae8391f9141e49e826e454c664801e", []},
   "con_cache": {:hex, :con_cache, "0.14.0", "863acb90fa08017be3129074993af944cf7a4b6c3ee7c06c5cd0ed6b94fbc223", [:mix], [], "hexpm"},
   "fb": {:git, "https://github.com/functional-bitcoin/agent.git", "02423676b4e074e0c5811510de25a72c93583597", []},
-  "fb_agent": {:git, "https://github.com/functional-bitcoin/agent.git", "9541b416a30b6b6b555b2c4a8a89a878d4246439", []},
+  "fb_agent": {:git, "https://github.com/functional-bitcoin/agent.git", "12880bb1c114f6e31d9479dc35491fd361d9c690", []},
   "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "luerl": {:hex, :luerl, "0.4.0", "6d3191f529286b77b765e790a70cc36b6b27d91e97363afa89e0b7394f5116bd", [:rebar3], [], "hexpm"},
   "mime": {:hex, :mime, "1.3.1", "30ce04ab3175b6ad0bdce0035cba77bba68b813d523d1aac73d9781b4d193cf8", [:mix], [], "hexpm"},
