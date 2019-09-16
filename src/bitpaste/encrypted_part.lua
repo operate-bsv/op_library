@@ -26,7 +26,7 @@ unencrypted data.
     #   }
     # }
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
 return function(ctx, secret, data)
@@ -45,10 +45,7 @@ return function(ctx, secret, data)
   -- Private key must be in raw erlang style (array of binaries)
   function encrypted.decrypt(privatekey)
     local key   = crypto.rsa.decrypt(encrypted.secret, privatekey)
-    local iv    = string.sub(encrypted.data, 1, 12)
-    local data  = string.sub(encrypted.data, 13, -17)
-    local tag   = string.sub(encrypted.data, -16)
-    return crypto.aes.decrypt(iv..tag..data, key, {aad = ''})
+    return crypto.aes.decrypt(encrypted.data, key)
   end
 
   ctx.encrypted = encrypted

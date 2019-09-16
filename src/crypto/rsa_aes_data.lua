@@ -1,18 +1,22 @@
 --[[
 Places the given encrypted data on the context at the specifid path, with a
-`decrypt` function to handle decryption. Uses ECIES and is compatible with
-Electrum and bsv.js ECIES implementations.
+`decrypt` function to handle decryption. Uses RSA/AES and is compatible with
+the Web Crypto API.
 
 The `path` parameter must be an alphanumeric path. When it is dot delimeted the
 value is set on a deeply nested table. If the path ends in `[]` the value is
 placed in an array - allowing multiple values to be placed at the same path.
 
-The `data` parameter must be encrypted using Electrum's ECIES implementation.
+The `secret` parameter is the symetric encryption secret which must be encrypted
+using the RSA-OAEP algorithm.
+
+The `data` parameter must be encrypted using the AES alogrithm in GCM-256 mode.
+The encrypted data should be in the following order: `<<iv, data, tag>>`
 
 The function optionally accepts a variable length number of other arguments and
 maps them into key value pairs and extends the object.
 
-The returned `decrypt` function accepts an ECDSA private key and returns the
+The returned `decrypt` function accepts an RSA private key and returns the
 unencrypted data.
 
 ## Examples
@@ -20,6 +24,7 @@ unencrypted data.
     OP_RETURN
       $REF
         "secure.data"
+        "encrypted secret"
         "encrypted data"
         "type"
         "text/plain"
@@ -28,6 +33,7 @@ unencrypted data.
     #     data: {
     #       data: "encrypted data",
     #       decrypt: function(privatekey),
+    #       secret: "encrypted secret",
     #       type: "text/plain"
     #     }
     #   }
@@ -36,28 +42,32 @@ unencrypted data.
     OP_RETURN
       $REF
         "secure[]"
+        "secret1"
         "encrypted data"
         "|"
       $REF
         "secure[]"
+        "secret2"
         "more encrypted data"
     # {
     #   secure: [
     #     {
     #       data: "encrypted data",
-    #       decrypt: function(privatekey)
+    #       decrypt: function(privatekey),
+    #       secret: "secret1"
     #     },
     #     {
     #       data: "more encrypted data",
-    #       decrypt: function(privatekey)
+    #       decrypt: function(privatekey),
+    #       secret: "secret2"
     #     }
     #   ]
     # }
 
-@version 0.0.2
+@version 0.0.1
 @author Libs
 ]]--
-return function(ctx, path, data, ...)
+return function(ctx, path, secret, data, ...)
   ctx = ctx or {}
 
   -- Local helper method to determine if a string is blank
@@ -72,8 +82,8 @@ return function(ctx, path, data, ...)
     string.match(path, '^[%a%d%.]+%[?%]?$'),
     'Invalid path. Must be dot delimeted alphanumeric path.')
   assert(
-    not isblank(data),
-    'Invalid parameters. Must receive encryped data.')
+    not isblank(secret) and not isblank(data),
+    'Invalid parameters. Must receive secret and encrypted data.')
   
   -- Helper function to put the value on the tip of the path. If the path ends
   -- with `[]` then the value is placed in an integer indexed table.
@@ -105,7 +115,8 @@ return function(ctx, path, data, ...)
 
   -- Build the encrypted data object
   local encrypted = {
-    data = data
+    data = data,
+    secret = secret
   }
 
   -- Iterrate over each vararg pair to get the path and value
@@ -114,15 +125,17 @@ return function(ctx, path, data, ...)
     if math.fmod(n, 2) > 0 then
       local path = select(n, ...)
       local value = select(n+1, ...)
-      if not isblank(path) and path ~= 'data' then
+      if not isblank(path) and path ~= 'data' and path ~= 'secret' then
         extend(encrypted, path, value)
       end
     end
   end
 
-  -- Attach decrypion method the recieves an ECSDA private key
+  -- Attach decrypion method the recieves an RSA private key
+  -- Private key must be in raw erlang style (array of binaries)
   function encrypted.decrypt(privatekey)
-    return crypto.ecies.decrypt(encrypted.data, privatekey)
+    local key = crypto.rsa.decrypt(encrypted.secret, privatekey)
+    return crypto.aes.decrypt(encrypted.data, key)
   end
 
   extend(ctx, path, encrypted)

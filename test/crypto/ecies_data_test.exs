@@ -17,6 +17,12 @@ defmodule Crypto.ECIESDataTest do
       assert is_function(res["foo"]["decrypt"])
     end
 
+    test "must extend the object with key value pairs", ctx do
+      res = %FBAgent.Cell{script: ctx.script, params: ["foo", "encrypteddata", "type", "text/plain", "name", "foobar"]}
+      |> FBAgent.Cell.exec!(ctx.vm)
+      assert (%{"name" => "foobar", "type" => "text/plain"} = res["foo"]) == res["foo"]
+    end
+
     test "must put the encrypted object at the nested path", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar.baz", "encrypteddata"]}
       |> FBAgent.Cell.exec!(ctx.vm)
