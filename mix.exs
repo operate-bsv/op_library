@@ -14,7 +14,8 @@ defmodule FB.Library do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:fb_agent, git: "https://github.com/functional-bitcoin/agent.git"}
+      {:fb_agent, git: "https://github.com/functional-bitcoin/agent.git"},
+      {:tesla, "~> 1.2.1"}
     ]
   end
 end
