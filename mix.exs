@@ -15,6 +15,7 @@ defmodule FB.Library do
   defp deps do
     [
       {:fb_agent, git: "https://github.com/functional-bitcoin/agent.git"},
+      {:luerl, git: "https://github.com/libitx/luerl.git", branch: "develop", override: true},
       {:tesla, "~> 1.2.1"}
     ]
   end
