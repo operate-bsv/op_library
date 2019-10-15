@@ -4,7 +4,7 @@ unimplemented protocols.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
 
 @version 0.1.0

@@ -14,7 +14,7 @@ unencrypted data.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "secret"    # 256 bit encrypted secret
         "encrypted data"

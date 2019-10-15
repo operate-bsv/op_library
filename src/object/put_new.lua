@@ -9,7 +9,7 @@ table until the value is set on the tip.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "account"
         "user.name"

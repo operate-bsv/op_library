@@ -4,7 +4,7 @@ result. The current state is passed to the loaded tape.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "c081e7158d76b6962ecbd3b51182aac249615743574464aa3b96fce4a998858d"
 

@@ -4,7 +4,7 @@ parameter is given, one random number is returned.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "2"
     # [0.8900582807863565, 0.6963011994435739]

@@ -2,7 +2,7 @@
 Implements the [Author Idendity Protocol](https://github.com/BitcoinFiles/AUTHOR_IDENTITY_PROTOCOL).
 
 An `_AIP` attribute is added to the state containing a table of AIP signatures,
-allowing the protocol to be used multiple times in the same tape. Each AIP object
+allowing multiple signatures to be appended to the state. Each AIP object
 contains the protocol paramaters, plus a `verified` boolean attribute.
 
 ## Examples

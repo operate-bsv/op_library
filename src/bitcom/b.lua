@@ -4,7 +4,7 @@ parameters.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "Hello world"
         "text/plain"

@@ -4,7 +4,7 @@ minimum and maximum range.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "6"
         "1"

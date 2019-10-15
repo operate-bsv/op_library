@@ -6,7 +6,7 @@ Fibonacci numbers.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "10"
         "55"

@@ -4,7 +4,7 @@ and decodes the stringified weather data.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         0x01
         "{\"t\":25.22,\"h\":83,\"p\":1009,\"r\":0.25,\"c\":90,\"ws\":2.6,\"wd\":250}"

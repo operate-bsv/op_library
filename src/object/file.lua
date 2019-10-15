@@ -3,7 +3,7 @@ Creates a simple file object using the given parameters.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "text/plain"
         "Hello world"

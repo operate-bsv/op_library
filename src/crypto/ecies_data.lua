@@ -17,7 +17,7 @@ unencrypted data.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "secure.data"
         "encrypted data"

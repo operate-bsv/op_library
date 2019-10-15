@@ -8,7 +8,7 @@ changes.
 
 ## Examples
 
-    OP_RETURN
+    OP_FALSE OP_RETURN
       $REF
         "SET"
         "user.name"
