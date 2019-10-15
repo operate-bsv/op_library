@@ -24,18 +24,18 @@ and decodes the stringified weather data.
     #   timestamp: 1561512601
     # }
 
-@version 0.0.1
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, _cmd, data, channel, timestamp)
-  ctx = ctx or {}
+return function(state, _cmd, data, channel, timestamp)
+  state = state or {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
 
-  ctx.data = json.decode(data)
-  ctx.channel = channel
-  ctx.timestamp = tonumber(timestamp)
+  state.data = json.decode(data)
+  state.channel = channel
+  state.timestamp = tonumber(timestamp)
 
-  return ctx
+  return state
 end

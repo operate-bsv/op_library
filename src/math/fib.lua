@@ -12,14 +12,14 @@ Fibonacci numbers.
         "55"
     # [55, 139583862445]
 
-@version 0.0.1
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, ...)
-  ctx = ctx or {}
+return function(state, ...)
+  state = state or {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
 
   -- Local function to derive the nth Fib number using tail-optimised recusion.
   local function trfib(n, u, s)
@@ -34,11 +34,11 @@ return function(ctx, ...)
     return trfib(n-1, 1, 0)
   end
 
-  -- Iterrate over each vararg number and insert Fib number into context.
+  -- Iterrate over each vararg number and insert Fib number into state.
   for i, n in ipairs({...}) do
     local n = tonumber(n)
-    if n ~= nil then table.insert(ctx, fib(n)) end
+    if n ~= nil then table.insert(state, fib(n)) end
   end
  
-  return ctx
+  return state
 end

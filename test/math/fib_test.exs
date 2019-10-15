@@ -27,11 +27,4 @@ defmodule Math.FibTest do
     ]
   end
 
-  #test "must raise when numbers dont give enough range", ctx do
-  #  assert_raise RuntimeError, ~r/^Lua Error/, fn ->
-  #    %FBAgent.Cell{script: ctx.script, params: ["11", "1", "10"]}
-  #    |> FBAgent.Cell.exec!(ctx.vm)
-  #  end
-  #end
-
 end

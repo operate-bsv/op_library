@@ -8,7 +8,7 @@ defmodule Object.PutNewTest do
     }
   end
   
-  describe "without a context" do
+  describe "without a state" do
     test "must set simple key value pairs with empty object on path", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["foo", "a", 1, "b", 2]}
       |> FBAgent.Cell.exec!(ctx.vm)
@@ -22,17 +22,17 @@ defmodule Object.PutNewTest do
 #    end
   end
 
-  describe "with a context" do
-    test "must place the context at the path", ctx do
+  describe "with a state" do
+    test "must place the state at the path", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["qux", "foo.bar", 3, "foo.baz", 4]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 1, "baz" => 2}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
       assert res["qux"]["foo"] == %{"bar" => 1, "baz" => 2}
       assert res["foo"] == %{"bar" => 3, "baz" => 4}
     end
 
-    test "wont override the new context", ctx do
+    test "wont override the new state", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["qux", "qux.foo.bar", 5, "qux.foo.dad", 6]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 1, "baz" => 2}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
       assert res["qux"]["foo"] == %{"bar" => 1, "baz" => 2, "dad" => 6}
     end
   end

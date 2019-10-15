@@ -11,15 +11,15 @@ minimum and maximum range.
         "59"
     # [3, 35, 49, 2, 5, 22]
 
-@version 0.0.1
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, n, min, max)
-  ctx = ctx or {}
+return function(state, n, min, max)
+  state = state or {}
   local nums = {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
   assert(
     max - (min-1) >= tonumber(n),
     'Invalid arguments. Insufficent range.')
@@ -35,12 +35,12 @@ return function(ctx, n, min, max)
     return n
   end
 
-  -- Iterate from 1 to n, adding unique random numbers to the context
+  -- Iterate from 1 to n, adding unique random numbers to the state
   for i = 1, n do
     local num = unique_random(nums, min, max)
     nums[num] = num
-    table.insert(ctx, num)
+    table.insert(state, num)
   end
 
-  return ctx
+  return state
 end

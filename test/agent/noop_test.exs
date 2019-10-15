@@ -8,11 +8,11 @@ defmodule Agent.NoopTest do
     }
   end
 
-  test "must return the same context", ctx do
-    context = %{"foo" => "bar", "baz" => "qux"}
+  test "must return the same state", ctx do
+    state = %{"foo" => "bar", "baz" => "qux"}
     res = %FBAgent.Cell{script: ctx.script, params: ["foo", "bar", "baz"]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: context)
-    assert res == context
+      |> FBAgent.Cell.exec!(ctx.vm, state: state)
+    assert res == state
   end
 
 end

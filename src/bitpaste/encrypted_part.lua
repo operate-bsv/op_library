@@ -1,5 +1,5 @@
 --[[
-Attaches encrypted data to the context object, with a `decrypt` function to
+Attaches encrypted data to the state object, with a `decrypt` function to
 handle decryption. Designed to be compatible with standard Web Crypto APIs
 available in most browsers.
 
@@ -26,14 +26,15 @@ unencrypted data.
     #   }
     # }
 
-@version 0.0.2
+@version 0.1.0
 @author Libs
+@private true
 ]]--
-return function(ctx, secret, data)
-  ctx = ctx or {}
+return function(state, secret, data)
+  state = state or {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
 
   -- Build the encrypted data object
   local encrypted = {
@@ -48,6 +49,6 @@ return function(ctx, secret, data)
     return crypto.aes.decrypt(encrypted.data, key)
   end
 
-  ctx.encrypted = encrypted
-  return ctx
+  state.encrypted = encrypted
+  return state
 end

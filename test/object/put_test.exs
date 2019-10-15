@@ -8,7 +8,7 @@ defmodule Object.PutTest do
     }
   end
   
-  describe "without a context" do
+  describe "without a state" do
     test "must set simple key value pairs on path", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["foo", "a", 1, "b", 2]}
       |> FBAgent.Cell.exec!(ctx.vm)
@@ -29,17 +29,17 @@ defmodule Object.PutTest do
     end
   end
 
-  describe "with a context" do
+  describe "with a state" do
     test "must merge simple objects", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["foo", "a", 1, "b", 2]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"bar" => %{"a" => 1, "b" => 2}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"bar" => %{"a" => 1, "b" => 2}})
       assert res["foo"] == %{"a" => 1, "b" => 2}
       assert res["bar"] == %{"a" => 1, "b" => 2}
     end
 
     test "must merge deep objects", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["foo.baz", "a", 1, "b", 2, "a", 3]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 1, "baz" => 2}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
       assert res["foo"]["bar"] == 1
       assert res["foo"]["baz"] == %{"a" => 3, "b" => 2}
     end

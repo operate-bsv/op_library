@@ -1,5 +1,5 @@
 --[[
-Places the given encrypted data on the context at the specifid path, with a
+Places the given encrypted data on the state at the specifid path, with a
 `decrypt` function to handle decryption. Uses RSA/AES and is compatible with
 the Web Crypto API.
 
@@ -64,11 +64,11 @@ unencrypted data.
     #   ]
     # }
 
-@version 0.0.1
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, path, secret, data, ...)
-  ctx = ctx or {}
+return function(state, path, secret, data, ...)
+  state = state or {}
 
   -- Local helper method to determine if a string is blank
   local function isblank(str)
@@ -76,8 +76,8 @@ return function(ctx, path, secret, data, ...)
   end
 
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
   assert(
     string.match(path, '^[%a%d%.]+%[?%]?$'),
     'Invalid path. Must be dot delimeted alphanumeric path.')
@@ -87,29 +87,29 @@ return function(ctx, path, secret, data, ...)
   
   -- Helper function to put the value on the tip of the path. If the path ends
   -- with `[]` then the value is placed in an integer indexed table.
-  local function put_value(ctx, path, value)
+  local function put_value(state, path, value)
     if string.match(path, '%[%]$') then
       local p = string.match(path, '^[%a%d]+')
-      if type(ctx[p]) ~= 'table' then ctx[p] = {} end
-      table.insert(ctx[p], value)
+      if type(state[p]) ~= 'table' then state[p] = {} end
+      table.insert(state[p], value)
     else
-      ctx[path] = value
+      state[path] = value
     end
   end
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
-  -- extending the context object or setting the value on the tip.
-  local function extend(ctx, path, value)
+  -- extending the state object or setting the value on the tip.
+  local function extend(state, path, value)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
       if i == #keys then
-        put_value(ctx, k, value)
-      elseif type(ctx[k]) ~= 'table' then
-        ctx[k] = {}
+        put_value(state, k, value)
+      elseif type(state[k]) ~= 'table' then
+        state[k] = {}
       end
-      ctx = ctx[k]
+      state = state[k]
     end
   end
 
@@ -138,6 +138,6 @@ return function(ctx, path, secret, data, ...)
     return crypto.aes.decrypt(encrypted.data, key)
   end
 
-  extend(ctx, path, encrypted)
-  return ctx
+  extend(state, path, encrypted)
+  return state
 end

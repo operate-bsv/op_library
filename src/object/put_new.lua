@@ -1,5 +1,5 @@
 --[[
-Creates a new object and places the context at the given path. The object is
+Creates a new object and places the state at the given path. The object is
 extended by placing the given values at the given keys unless the key already
 exists. Effectively the inverse of `object/put`.
 
@@ -24,41 +24,41 @@ table until the value is set on the tip.
     #   }
     # }
 
-@version 0.0.3
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, path, ...)
-  ctx = ctx or {}
+return function(state, path, ...)
+  state = state or {}
   local obj = {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
   assert(
     type(path) == 'string' and string.len(path) > 0,
     'Invalid path. Must receive a string.')
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
-  -- extending the context object or setting the value on the tip, without
+  -- extending the state object or setting the value on the tip, without
   -- overwriting any existing value.
-  local function extend_new(ctx, path, value)
+  local function extend_new(state, path, value)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
-      if type(ctx) ~= 'table' then
+      if type(state) ~= 'table' then
         break
-      elseif ctx[k] == nil then
-        if i == #keys then ctx[k] = value else ctx[k] = {} end
+      elseif state[k] == nil then
+        if i == #keys then state[k] = value else state[k] = {} end
       end
-      ctx = ctx[k]
+      state = state[k]
     end
   end
 
-  -- Extend new object with context
-  extend_new(obj, path, ctx)
+  -- Extend new object with state
+  extend_new(obj, path, state)
 
   -- Iterrate over each vararg pair to get the path and value
-  -- Unless path is blank, the context is extended
+  -- Unless path is blank, the state is extended
   for n = 1, select('#', ...) do
     if math.fmod(n, 2) > 0 then
       local path = select(n, ...)

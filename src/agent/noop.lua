@@ -1,5 +1,5 @@
 --[[
-A noop function that simply returns the unaltered context. Useful for skipping
+A noop function that simply returns the unaltered state. Useful for skipping
 unimplemented protocols.
 
 ## Examples
@@ -7,9 +7,9 @@ unimplemented protocols.
     OP_RETURN
       $REF
 
-@version 0.0.2
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx)
-  return ctx
+return function(state)
+  return state
 end

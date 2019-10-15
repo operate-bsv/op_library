@@ -4,7 +4,7 @@ defmodule Math.RandTest do
   setup_all do
     %{
       # Set VM with fake txid
-      vm: FBAgent.VM.init |> Sandbox.set!("tx", %{txid: "abcdef"}),
+      vm: FBAgent.VM.init |> FBAgent.VM.set!("tx", %{txid: "abcdef"}),
       script: File.read!("src/math/rand.lua")
     }
   end

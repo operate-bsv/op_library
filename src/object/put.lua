@@ -1,5 +1,5 @@
 --[[
-Extends the context table at the given path, and puts a new object from the
+Extends the state table at the given path, and puts a new object from the
 given keys and values (overriding values where keys already exist).
 
 Takes a variable length number of arguments and maps them into key value pairs.
@@ -22,32 +22,32 @@ table until the value is set on the tip.
     #   }
     # }
 
-@version 0.0.2
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, path, ...)
-  ctx = ctx or {}
+return function(state, path, ...)
+  state = state or {}
   local obj = {}
   assert(
-    type(ctx) == 'table',
-    'Invalid context. Must receive a table.')
+    type(state) == 'table',
+    'Invalid state. Must receive a table.')
   assert(
     type(path) == 'string' and string.len(path) > 0,
     'Invalid path. Must receive a string.')
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
-  -- extending the context object or setting the value on the tip.
-  local function extend(ctx, path, value)
+  -- extending the state object or setting the value on the tip.
+  local function extend(state, path, value)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
       if i == #keys then
-        ctx[k] = value
-      elseif type(ctx[k]) ~= 'table' then
-        ctx[k] = {}
+        state[k] = value
+      elseif type(state[k]) ~= 'table' then
+        state[k] = {}
       end
-      ctx = ctx[k]
+      state = state[k]
     end
   end
 
@@ -63,7 +63,7 @@ return function(ctx, path, ...)
     end
   end
 
-  -- Extend the context
-  extend(ctx, path, obj)
-  return ctx
+  -- Extend the state
+  extend(state, path, obj)
+  return state
 end

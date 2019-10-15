@@ -43,7 +43,7 @@ defmodule Crypto.ECIESDataTest do
     test "must raise if ctx is not null or table", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
         %FBAgent.Cell{script: ctx.script, params: ["foo.bar", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm, context: 11)
+        |> FBAgent.Cell.exec!(ctx.vm, state: 11)
       end
     end
 
@@ -71,7 +71,7 @@ defmodule Crypto.ECIESDataTest do
       |> FBAgent.Cell.exec!(ctx.vm)
 
       data = res["foo"]["decrypt"]
-      |> FBAgent.VM.exec!([ctx.priv_key])
+      |> FBAgent.VM.exec_function!([ctx.priv_key])
       assert data == "Hello world!"
     end
   end
@@ -92,7 +92,7 @@ defmodule Crypto.ECIESDataTest do
       |> FBAgent.Cell.exec!(ctx.vm)
 
       data = res["foo"]["bar"]["decrypt"]
-      |> FBAgent.VM.exec!([ctx.priv_key])
+      |> FBAgent.VM.exec_function!([ctx.priv_key])
       assert data == "Hello world 😃!"
     end
   end

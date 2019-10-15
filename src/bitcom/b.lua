@@ -17,14 +17,14 @@ parameters.
     #   type: "text/plain",
     # }
 
-@version 0.0.3
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, data, mediatype, encoding, name)
-  local file = ctx or {}
+return function(state, data, mediatype, encoding, name)
+  local file = state or {}
   assert(
     type(file) == 'table',
-    'Invalid context. Must receive a table.')
+    'Invalid state. Must receive a table.')
 
   -- Local helper method to determine if a string is blank
   local function isblank(str)

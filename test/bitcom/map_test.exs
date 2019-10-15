@@ -8,7 +8,7 @@ defmodule Bitcom.MAPTest do
     }
   end
 
-  describe "SET without a context" do
+  describe "SET without a state" do
     test "must set simple key values", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["SET", "foo.bar", 1, "foo.baz", 2]}
       |> FBAgent.Cell.exec!(ctx.vm)
@@ -24,17 +24,17 @@ defmodule Bitcom.MAPTest do
     end
   end
 
-  describe "SET with a context" do
+  describe "SET with a state" do
     test "must merge deep objects", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["SET", "foo.baz", "x", "foo.qux", "y"]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 1, "baz" => 2}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
       assert res["foo"] == %{"bar" => 1, "baz" => "x", "qux" => "y"}
       assert res["_MAP"]["SET"] == %{"foo.baz" => "x", "foo.qux" => "y"}
     end
   end
 
-  describe "DELETE without a context" do
-    test "must put mappings onto context", ctx do
+  describe "DELETE without a state" do
+    test "must put mappings onto state", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["DELETE", "foo.bar", "foo.baz"]}
       |> FBAgent.Cell.exec!(ctx.vm)
       assert Map.keys(res) == ["_MAP"]
@@ -43,19 +43,19 @@ defmodule Bitcom.MAPTest do
 
     test "must delete exact mappings", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["DELETE", "foo.bar", "foo.baz"]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 1, "baz" => 2, "qux" => 3}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2, "qux" => 3}})
       assert res["foo"] == %{"qux" => 3}
     end
 
     test "must delete entire trees", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["DELETE", "foo.bar"]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => %{"baz" => 2, "qux" => 3}}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => %{"baz" => 2, "qux" => 3}}})
       assert res["foo"] == []
     end
 
     test "must ignore if path doesnt exist", ctx do
       res = %FBAgent.Cell{script: ctx.script, params: ["DELETE", "foo.bar", "foo.baz.qux"]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: %{"foo" => %{"bar" => 42, "qux" => 11}})
+      |> FBAgent.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 42, "qux" => 11}})
       assert res["foo"] == %{"qux" => 11}
       assert res["_MAP"]["DELETE"] == ["foo.bar", "foo.baz.qux"]
     end

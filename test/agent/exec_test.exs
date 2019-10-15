@@ -10,7 +10,7 @@ defmodule Agent.ExecTest do
   end
 
 
-  describe "Call without a context" do
+  describe "Call without a state" do
     setup do
       Tesla.Mock.mock fn env ->
         cond do
@@ -40,7 +40,7 @@ defmodule Agent.ExecTest do
   end
 
 
-  describe "Call with a context" do
+  describe "Call with a state" do
     setup do
       Tesla.Mock.mock fn env ->
         cond do
@@ -56,7 +56,7 @@ defmodule Agent.ExecTest do
     test "must return the result of the given txid", ctx do
       txid = "c081e7158d76b6962ecbd3b51182aac249615743574464aa3b96fce4a998858d"
       res = %FBAgent.Cell{script: ctx.script, params: [txid]}
-      |> FBAgent.Cell.exec!(ctx.vm, context: ["testing123"])
+      |> FBAgent.Cell.exec!(ctx.vm, state: ["testing123"])
       assert List.first(res["numbers"]) == "testing123"
     end
   end

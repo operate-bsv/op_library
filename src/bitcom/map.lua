@@ -1,9 +1,9 @@
 --[[
 Implements the Magic Attribute Protocol. Depending on the given mode, the
-context is either extended with the given values at the given keys (overriding
-values where keys already exist), or the given keys are deleted from the context.
+state is either extended with the given values at the given keys (overriding
+values where keys already exist), or the given keys are deleted from the state.
 
-In addition a `_MAP` attribute is attached to the context listing the mapping
+In addition a `_MAP` attribute is attached to the state listing the mapping
 changes.
 
 ## Examples
@@ -28,55 +28,55 @@ changes.
     #   }
     # }
 
-@version 0.0.2
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, mode, ...)
-  ctx = ctx or {}
+return function(state, mode, ...)
+  state = state or {}
   local obj = {}
   local mode = string.upper(mode or '')
   assert(
-    type(ctx) == 'table',
-    'Invalid context type.')
+    type(state) == 'table',
+    'Invalid state type.')
   assert(
     mode == 'SET' or mode == 'DELETE',
     'Invalid MAP mode. Must be SET or DELETE.')
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
-  -- extending the context object or setting the value on the tip.
-  local function extend(ctx, path, value)
+  -- extending the state object or setting the value on the tip.
+  local function extend(state, path, value)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
       if i == #keys then
-        ctx[k] = value
-      elseif type(ctx[k]) ~= 'table' then
-        ctx[k] = {}
+        state[k] = value
+      elseif type(state[k]) ~= 'table' then
+        state[k] = {}
       end
-      ctx = ctx[k]
+      state = state[k]
     end
   end
 
   -- Helper function to drop the path from the given object.
-  -- Splits the path into an array of keys and traverses the context object
+  -- Splits the path into an array of keys and traverses the state object
   -- until it nullifies the tip.
-  local function drop(ctx, path)
+  local function drop(state, path)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
-      if type(ctx) ~= 'table' then
+      if type(state) ~= 'table' then
         break
-      elseif ctx[k] ~= nil then
-        if i == #keys then ctx[k] = nil end
+      elseif state[k] ~= nil then
+        if i == #keys then state[k] = nil end
       end
-      ctx = ctx[k]
+      state = state[k]
     end
   end
 
   if mode == 'SET' then
     -- Iterrate over each vararg pair to get the path and value
-    -- Unless path is blank, the context is extended
+    -- Unless path is blank, the state is extended
     for n = 1, select('#', ...) do
       if math.fmod(n, 2) > 0 then
         local path = select(n, ...)
@@ -84,21 +84,21 @@ return function(ctx, mode, ...)
         
         if path ~= nil and string.len(path) > 0 then
           obj[path] = value
-          extend(ctx, path, value)
+          extend(state, path, value)
         end
       end
     end
   elseif mode == 'DELETE' then
-    -- Iterrate over each vararg and drop from the context
+    -- Iterrate over each vararg and drop from the state
     for i, path in ipairs({...}) do
       table.insert(obj, path)
-      drop(ctx, path)
+      drop(state, path)
     end
   end
   
-  -- Attach mapping to context
-  ctx['_MAP'] = {}
-  ctx['_MAP'][string.upper(mode)] = obj
+  -- Attach mapping to state
+  state['_MAP'] = {}
+  state['_MAP'][mode] = obj
 
-  return ctx
+  return state
 end

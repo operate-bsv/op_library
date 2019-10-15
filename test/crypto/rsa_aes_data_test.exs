@@ -44,7 +44,7 @@ defmodule Crypto.RSAAESDataTest do
     test "must raise if ctx is not null or table", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
         %FBAgent.Cell{script: ctx.script, params: ["foo.bar", "encryptedsecret", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm, context: 11)
+        |> FBAgent.Cell.exec!(ctx.vm, state: 11)
       end
     end
 
@@ -81,7 +81,7 @@ defmodule Crypto.RSAAESDataTest do
       |> FBAgent.Cell.exec!(ctx.vm)
 
       data = res["foo"]["decrypt"]
-      |> FBAgent.VM.exec!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world!"
     end
   end
@@ -108,7 +108,7 @@ defmodule Crypto.RSAAESDataTest do
       |> FBAgent.Cell.exec!(ctx.vm)
 
       data = res["foo"]["bar"]["decrypt"]
-      |> FBAgent.VM.exec!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world 😎"
     end
   end

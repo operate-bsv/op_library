@@ -3,11 +3,11 @@ Implements the [Author Idendity Protocol](https://github.com/BitcoinFiles/AUTHOR
 
 **DRAFT**
 
-@version 0.0.1
+@version 0.0.2
 @author Libs
 ]]--
-return function(ctx, algo, address, signature, ...)
-  ctx = ctx or {}
+return function(state, algo, address, signature, ...)
+  state = state or {}
 
   -- Define AIP object
   local aip = {
@@ -23,7 +23,7 @@ return function(ctx, algo, address, signature, ...)
     return nil
   end
 
-  ctx['_AIP'] = aip
+  state['_AIP'] = aip
 
-  return ctx
+  return state
 end

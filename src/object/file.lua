@@ -12,11 +12,11 @@ Creates a simple file object using the given parameters.
     #   type: "text/plain"
     # }
 
-@version 0.0.3
+@version 0.1.0
 @author Libs
 ]]--
-return function(ctx, mediatype, data)
-  local file = ctx or {}
+return function(state, mediatype, data)
+  local file = state or {}
   assert(
     type(file) == 'table',
     'Invalid context. Must receive a table.')

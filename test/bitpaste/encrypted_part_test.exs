@@ -41,7 +41,7 @@ defmodule Bitpaste.EncryptedPartTest do
       |> FBAgent.Cell.exec!(ctx.vm)
 
       data = res["encrypted"]["decrypt"]
-      |> FBAgent.VM.exec!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world 😎"
     end
   end
