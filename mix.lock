@@ -2,7 +2,7 @@
   "basefiftyeight": {:hex, :basefiftyeight, "0.1.0", "3d48544743bf9aab7ab02aed803ac42af77acf268c7d8c71d4f39e7fa85ee8d3", [:mix], [], "hexpm"},
   "bsv": {:hex, :bsv, "0.2.2", "b91044e573db4f7b606ada8efa63ba9392a7d9c0cff3af6c8b0e36a333f71d24", [:mix], [{:basefiftyeight, "~> 0.1", [hex: :basefiftyeight, repo: "hexpm", optional: false]}, {:libsecp256k1, "~> 0.1", [hex: :libsecp256k1, repo: "hexpm", optional: false]}], "hexpm"},
   "con_cache": {:hex, :con_cache, "0.14.0", "863acb90fa08017be3129074993af944cf7a4b6c3ee7c06c5cd0ed6b94fbc223", [:mix], [], "hexpm"},
-  "fb_agent": {:git, "https://github.com/functional-bitcoin/agent.git", "080705fe971a6cc9cde15a73d80d3fc597513d2e", []},
+  "fb_agent": {:git, "https://github.com/functional-bitcoin/agent.git", "a4d50af3d244786e8a7733fc9e29b30191826108", []},
   "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "libsecp256k1": {:hex, :libsecp256k1, "0.1.10", "d27495e2b9851c7765129b76c53b60f5e275bd6ff68292c50536bf6b8d091a4d", [:make, :mix], [{:mix_erlang_tasks, "0.1.0", [hex: :mix_erlang_tasks, repo: "hexpm", optional: false]}], "hexpm"},
   "luerl": {:git, "https://github.com/libitx/luerl.git", "97d8dff24ec5046ecea4bd78d1578c5d008b0e7b", [branch: "develop"]},

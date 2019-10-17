@@ -30,7 +30,7 @@ contains the protocol paramaters, plus a `verified` boolean attribute.
     #   ]
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, algo, address, signature, ...)
@@ -78,7 +78,8 @@ return function(state, algo, address, signature, ...)
   local tape = ctx.get_tape()
   if tape ~= nil then
     for k, idx in ipairs(indices) do
-      message = message .. tape[idx + 1]
+      local data = tape[idx + 1]
+      message = message .. data.b
     end
     aip.verified = crypto.bitcoin_message.verify(signature, message, address, {encoding = 'binary'})
   end
