@@ -24,7 +24,7 @@ attributes.
     # {
     #   _HAIP: [
     #     {
-    #       sig_algo: "SHA@%^",
+    #       sig_algo: "SHA256",
     #       sig_algo: "BITCOIN_ECDSA",
     #       address: "1Ghayxcf8askMqL9EV9V9QpExTR2j6afhv",
     #       indices: [],
@@ -32,7 +32,11 @@ attributes.
     #       hash: "733c8e0d921a72e1e650c16820cbcca53aac42ba98c3b27635c2dc978e11fc7f",
     #       verified: true
     #     }
-    #   ]
+    #   ],
+    #   data: "{ \"message\": \"Hello world!\" }",
+    #   encoding: "UTF-8",
+    #   name: "hello.json",
+    #   type: "application/json",
     # }
 
 @version 0.1.0

@@ -27,7 +27,11 @@ contains the protocol paramaters, plus a `verified` boolean attribute.
     #       signature: "HKzuHb43Xj4XpmK1YJROD/eN/58ZR0T7LuRi2QW8eFcnQg1d7tSy3QGQI/VQr09PeTQFAXniFyIFkqQYgvAlHvQ=",
     #       verified: true
     #     }
-    #   ]
+    #   ],
+    #   data: "Hello world",
+    #   encoding: "utf8",
+    #   name: null,
+    #   type: "text/plain",
     # }
 
 @version 0.1.1
