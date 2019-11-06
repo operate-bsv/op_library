@@ -4,7 +4,7 @@ defmodule Math.RandTest do
   setup_all do
     %{
       # Set VM with fake txid
-      vm: Operate.VM.init |> Operate.VM.set!("tx", %{txid: "abcdef"}),
+      vm: Operate.VM.init |> Operate.VM.set!("ctx.tx", %{txid: "abcdef"}),
       op: File.read!("src/math/rand.lua")
     }
   end

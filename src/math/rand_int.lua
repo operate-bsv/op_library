@@ -11,7 +11,7 @@ minimum and maximum range.
         "59"
     # [3, 35, 49, 2, 5, 22]
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, n, min, max)
@@ -25,7 +25,7 @@ return function(state, n, min, max)
     'Invalid arguments. Insufficent range.')
 
   -- Set the seed for the random generate based on the txid
-  local seed = tonumber(tx.txid, 16)
+  local seed = tonumber(ctx.tx.txid, 16)
   math.randomseed(seed)
 
   -- Local helper method to generate unique random number

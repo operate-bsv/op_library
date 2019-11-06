@@ -9,7 +9,7 @@ parameter is given, one random number is returned.
         "2"
     # [0.8900582807863565, 0.6963011994435739]
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, n)
@@ -20,7 +20,7 @@ return function(state, n)
     'Invalid state. Must receive a table.')
 
   -- Set the seed for the random generate based on the txid
-  local seed = tonumber(tx.txid, 16)
+  local seed = tonumber(ctx.tx.txid, 16)
   math.randomseed(seed)
 
   -- Iterate from 1 to n, adding unique random numbers to the state
