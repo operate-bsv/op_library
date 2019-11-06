@@ -3,37 +3,37 @@ defmodule Crypto.RSAAESDataTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/crypto/rsa_aes_data.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/crypto/rsa_aes_data.lua")
     }
   end
   
 
   describe "with dummy data" do
     test "must put the encrypted object at the path", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", "encryptedsecret", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", "encryptedsecret", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert res["foo"]["data"] == "encrypteddata"
       assert res["foo"]["secret"] == "encryptedsecret"
       assert is_function(res["foo"]["decrypt"])
     end
 
     test "must extend the object with key value pairs", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", "encryptedsecret", "encrypteddata", "type", "text/plain", "name", "foobar"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", "encryptedsecret", "encrypteddata", "type", "text/plain", "name", "foobar"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert (%{"name" => "foobar", "type" => "text/plain"} = res["foo"]) == res["foo"]
     end
 
     test "must put the encrypted object at the nested path", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar.baz", "encryptedsecret", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar.baz", "encryptedsecret", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert res["foo"]["bar"]["baz"]["data"] == "encrypteddata"
       assert is_function(res["foo"]["bar"]["baz"]["decrypt"])
     end
 
     test "must put the encrypted object in an array", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar[]", "encryptedsecret", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar[]", "encryptedsecret", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert is_list(res["foo"]["bar"])
       assert get_in(List.first(res["foo"]["bar"]), ["secret"]) == "encryptedsecret"
     end
@@ -43,22 +43,22 @@ defmodule Crypto.RSAAESDataTest do
   describe "with invalid data" do
     test "must raise if ctx is not null or table", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
-        %FBAgent.Cell{script: ctx.script, params: ["foo.bar", "encryptedsecret", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm, state: 11)
+        %Operate.Cell{op: ctx.op, params: ["foo.bar", "encryptedsecret", "encrypteddata"]}
+        |> Operate.Cell.exec!(ctx.vm, state: 11)
       end
     end
 
     test "must raise if without secret or data", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
-        %FBAgent.Cell{script: ctx.script, params: ["foo.bar", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm)
+        %Operate.Cell{op: ctx.op, params: ["foo.bar", "encrypteddata"]}
+        |> Operate.Cell.exec!(ctx.vm)
       end
     end
 
     test "must raise if invalid path", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
-        %FBAgent.Cell{script: ctx.script, params: ["non dot delimited p@th", "encryptedsecret", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm)
+        %Operate.Cell{op: ctx.op, params: ["non dot delimited p@th", "encryptedsecret", "encrypteddata"]}
+        |> Operate.Cell.exec!(ctx.vm)
       end
     end
   end
@@ -77,11 +77,11 @@ defmodule Crypto.RSAAESDataTest do
       secret    = BSV.Crypto.AES.generate_secret
       encsecret = BSV.Crypto.RSA.encrypt(secret, ctx.pub_key)
       encdata   = BSV.Crypto.AES.encrypt("Hello world!", :gcm, secret, aad: "")
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", encsecret, encdata]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", encsecret, encdata]}
+      |> Operate.Cell.exec!(ctx.vm)
 
       data = res["foo"]["decrypt"]
-      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> Operate.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world!"
     end
   end
@@ -104,11 +104,11 @@ defmodule Crypto.RSAAESDataTest do
     end
 
     test "must decrypt the data", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar", ctx.secret, ctx.data]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar", ctx.secret, ctx.data]}
+      |> Operate.Cell.exec!(ctx.vm)
 
       data = res["foo"]["bar"]["decrypt"]
-      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> Operate.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world 😎"
     end
   end

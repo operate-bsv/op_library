@@ -3,16 +3,16 @@ defmodule Bitpaste.EncryptedPartTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/bitpaste/encrypted_part.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/bitpaste/encrypted_part.lua")
     }
   end
 
 
   describe "with dummy data" do
     test "must parse the data", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["testsecret", "testdata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["testsecret", "testdata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert res["encrypted"]["secret"] == "testsecret"
       assert res["encrypted"]["data"] == "testdata"
       assert is_function(res["encrypted"]["decrypt"])
@@ -37,11 +37,11 @@ defmodule Bitpaste.EncryptedPartTest do
     end
 
     test "must decrypt the data", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: [ctx.secret, ctx.data]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: [ctx.secret, ctx.data]}
+      |> Operate.Cell.exec!(ctx.vm)
 
       data = res["encrypted"]["decrypt"]
-      |> FBAgent.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
+      |> Operate.VM.exec_function!([BSV.Crypto.RSA.PrivateKey.as_raw(ctx.priv_key)])
       assert data == "Hello world 😎"
     end
   end

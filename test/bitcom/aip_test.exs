@@ -3,16 +3,16 @@ defmodule Bitcom.AIPTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/bitcom/aip.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/bitcom/aip.lua")
     }
   end
 
 
   describe "simple examples" do
     test "must set correct attributes", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["BITCOIN_ECDSA", "1AKHViYgBGbmxi8qiJkNvoHNeDu9m3MfPE", "##computed_sig##"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["BITCOIN_ECDSA", "1AKHViYgBGbmxi8qiJkNvoHNeDu9m3MfPE", "##computed_sig##"]}
+      |> Operate.Cell.exec!(ctx.vm)
       |> Map.get("_AIP")
       |> List.first
 
@@ -24,8 +24,8 @@ defmodule Bitcom.AIPTest do
     end
 
     test "must put variable length indices into list", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["BITCOIN_ECDSA", "1AKHViYgBGbmxi8qiJkNvoHNeDu9m3MfPE", "##computed_sig##", "1", "2", "3", "6", "7"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["BITCOIN_ECDSA", "1AKHViYgBGbmxi8qiJkNvoHNeDu9m3MfPE", "##computed_sig##", "1", "2", "3", "6", "7"]}
+      |> Operate.Cell.exec!(ctx.vm)
       |> Map.get("_AIP")
       |> List.first
 
@@ -38,23 +38,23 @@ defmodule Bitcom.AIPTest do
     setup do
       tx = File.read!("test/mocks/bitcom_aip_get_tape_1.json")
       |> Jason.decode!
-      |> FBAgent.Adapter.Bob.to_bpu
+      |> Operate.Adapter.Bob.to_bpu
       |> List.first
       %{
         tx: tx,
-        tape: FBAgent.Tape.from_bpu(tx)
+        tape: Operate.Tape.from_bpu!(tx)
       }
     end
 
     test "must verify the signature", ctx do
       vm = ctx.vm
-      |> FBAgent.VM.set!("ctx.tx", ctx.tape.tx)
-      |> FBAgent.VM.set!("ctx.tape_index", ctx.tape.index)
+      |> Operate.VM.set!("ctx.tx", ctx.tape.tx)
+      |> Operate.VM.set!("ctx.tape_index", ctx.tape.index)
 
       res = ctx.tape.cells
       |> Enum.at(1)
-      |> Map.put(:script, ctx.script)
-      |> FBAgent.Cell.exec!(vm)
+      |> Map.put(:op, ctx.op)
+      |> Operate.Cell.exec!(vm)
       |> Map.get("_AIP")
       |> List.first
 
@@ -68,23 +68,23 @@ defmodule Bitcom.AIPTest do
     setup do
       tx = File.read!("test/mocks/bitcom_aip_get_tape_2.json")
       |> Jason.decode!
-      |> FBAgent.Adapter.Bob.to_bpu
+      |> Operate.Adapter.Bob.to_bpu
       |> List.first
       %{
         tx: tx,
-        tape: FBAgent.Tape.from_bpu(tx)
+        tape: Operate.Tape.from_bpu!(tx)
       }
     end
 
     test "must verify the signature", ctx do
       vm = ctx.vm
-      |> FBAgent.VM.set!("ctx.tx", ctx.tape.tx)
-      |> FBAgent.VM.set!("ctx.tape_index", ctx.tape.index)
+      |> Operate.VM.set!("ctx.tx", ctx.tape.tx)
+      |> Operate.VM.set!("ctx.tape_index", ctx.tape.index)
 
       res = ctx.tape.cells
       |> Enum.at(2)
-      |> Map.put(:script, ctx.script)
-      |> FBAgent.Cell.exec!(vm)
+      |> Map.put(:op, ctx.op)
+      |> Operate.Cell.exec!(vm)
       |> Map.get("_AIP")
       |> List.first
 

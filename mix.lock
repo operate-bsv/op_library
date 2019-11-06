@@ -8,6 +8,7 @@
   "luerl": {:git, "https://github.com/libitx/luerl.git", "97d8dff24ec5046ecea4bd78d1578c5d008b0e7b", [branch: "develop"]},
   "mime": {:hex, :mime, "1.3.1", "30ce04ab3175b6ad0bdce0035cba77bba68b813d523d1aac73d9781b4d193cf8", [:mix], [], "hexpm"},
   "mix_erlang_tasks": {:hex, :mix_erlang_tasks, "0.1.0", "36819fec60b80689eb1380938675af215565a89320a9e29c72c70d97512e4649", [:mix], [], "hexpm"},
+  "operate": {:git, "https://github.com/operate-bsv/agent.git", "37dc02c86610deced61eff3669c0c2a3574abe43", []},
   "sandbox": {:hex, :sandbox, "0.3.0", "ddf21746a24abaa582b639359c0c069548d6639d219241d7a627431ba2d42837", [:mix], [{:luerl, "~> 0.4.0", [hex: :luerl, repo: "hexpm", optional: false]}], "hexpm"},
   "tesla": {:hex, :tesla, "1.2.1", "864783cc27f71dd8c8969163704752476cec0f3a51eb3b06393b3971dc9733ff", [:mix], [{:exjsx, ">= 3.0.0", [hex: :exjsx, repo: "hexpm", optional: true]}, {:fuse, "~> 2.4", [hex: :fuse, repo: "hexpm", optional: true]}, {:hackney, "~> 1.6", [hex: :hackney, repo: "hexpm", optional: true]}, {:ibrowse, "~> 4.4.0", [hex: :ibrowse, repo: "hexpm", optional: true]}, {:jason, ">= 1.0.0", [hex: :jason, repo: "hexpm", optional: true]}, {:mime, "~> 1.0", [hex: :mime, repo: "hexpm", optional: false]}, {:poison, ">= 1.0.0", [hex: :poison, repo: "hexpm", optional: true]}], "hexpm"},
 }

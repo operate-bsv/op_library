@@ -3,36 +3,36 @@ defmodule Crypto.ECIESDataTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/crypto/ecies_data.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/crypto/ecies_data.lua")
     }
   end
   
 
   describe "with dummy data" do
     test "must put the encrypted object at the path", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert res["foo"]["data"] == "encrypteddata"
       assert is_function(res["foo"]["decrypt"])
     end
 
     test "must extend the object with key value pairs", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", "encrypteddata", "type", "text/plain", "name", "foobar"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", "encrypteddata", "type", "text/plain", "name", "foobar"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert (%{"name" => "foobar", "type" => "text/plain"} = res["foo"]) == res["foo"]
     end
 
     test "must put the encrypted object at the nested path", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar.baz", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar.baz", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert res["foo"]["bar"]["baz"]["data"] == "encrypteddata"
       assert is_function(res["foo"]["bar"]["baz"]["decrypt"])
     end
 
     test "must put the encrypted object in an array", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar[]", "encrypteddata"]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar[]", "encrypteddata"]}
+      |> Operate.Cell.exec!(ctx.vm)
       assert is_list(res["foo"]["bar"])
       assert get_in(List.first(res["foo"]["bar"]), ["data"]) == "encrypteddata"
     end
@@ -42,15 +42,15 @@ defmodule Crypto.ECIESDataTest do
   describe "with invalid data" do
     test "must raise if ctx is not null or table", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
-        %FBAgent.Cell{script: ctx.script, params: ["foo.bar", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm, state: 11)
+        %Operate.Cell{op: ctx.op, params: ["foo.bar", "encrypteddata"]}
+        |> Operate.Cell.exec!(ctx.vm, state: 11)
       end
     end
 
     test "must raise if invalid path", ctx do
       assert_raise RuntimeError, ~r/Lua Error/, fn ->
-        %FBAgent.Cell{script: ctx.script, params: ["non dot delimited p@th", "encrypteddata"]}
-        |> FBAgent.Cell.exec!(ctx.vm)
+        %Operate.Cell{op: ctx.op, params: ["non dot delimited p@th", "encrypteddata"]}
+        |> Operate.Cell.exec!(ctx.vm)
       end
     end
   end
@@ -67,11 +67,11 @@ defmodule Crypto.ECIESDataTest do
 
     test "must decrypt the data", ctx do
       encdata = BSV.Crypto.ECIES.encrypt("Hello world!", ctx.pub_key)
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo", encdata]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo", encdata]}
+      |> Operate.Cell.exec!(ctx.vm)
 
       data = res["foo"]["decrypt"]
-      |> FBAgent.VM.exec_function!([ctx.priv_key])
+      |> Operate.VM.exec_function!([ctx.priv_key])
       assert data == "Hello world!"
     end
   end
@@ -88,11 +88,11 @@ defmodule Crypto.ECIESDataTest do
     end
 
     test "must decrypt the data", ctx do
-      res = %FBAgent.Cell{script: ctx.script, params: ["foo.bar", ctx.data]}
-      |> FBAgent.Cell.exec!(ctx.vm)
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar", ctx.data]}
+      |> Operate.Cell.exec!(ctx.vm)
 
       data = res["foo"]["bar"]["decrypt"]
-      |> FBAgent.VM.exec_function!([ctx.priv_key])
+      |> Operate.VM.exec_function!([ctx.priv_key])
       assert data == "Hello world 😃!"
     end
   end

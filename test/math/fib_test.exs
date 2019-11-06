@@ -3,14 +3,14 @@ defmodule Math.FibTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/math/fib.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/math/fib.lua")
     }
   end
   
   test "must return correct fib sequene", ctx do
-    res = %FBAgent.Cell{script: ctx.script, params: ["10", "100", "1000"]}
-    |> FBAgent.Cell.exec!(ctx.vm)
+    res = %Operate.Cell{op: ctx.op, params: ["10", "100", "1000"]}
+    |> Operate.Cell.exec!(ctx.vm)
     assert res == [
       55,
       354224848179261915075,
@@ -19,8 +19,8 @@ defmodule Math.FibTest do
   end
 
   test "must ignore non numeric values", ctx do
-    res = %FBAgent.Cell{script: ctx.script, params: ["10", "abc", "55"]}
-    |> FBAgent.Cell.exec!(ctx.vm)
+    res = %Operate.Cell{op: ctx.op, params: ["10", "abc", "55"]}
+    |> Operate.Cell.exec!(ctx.vm)
     assert res == [
       55,
       139583862445

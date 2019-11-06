@@ -3,15 +3,15 @@ defmodule Agent.NoopTest do
 
   setup_all do
     %{
-      vm: FBAgent.VM.init,
-      script: File.read!("src/agent/noop.lua")
+      vm: Operate.VM.init,
+      op: File.read!("src/agent/noop.lua")
     }
   end
 
   test "must return the same state", ctx do
     state = %{"foo" => "bar", "baz" => "qux"}
-    res = %FBAgent.Cell{script: ctx.script, params: ["foo", "bar", "baz"]}
-      |> FBAgent.Cell.exec!(ctx.vm, state: state)
+    res = %Operate.Cell{op: ctx.op, params: ["foo", "bar", "baz"]}
+      |> Operate.Cell.exec!(ctx.vm, state: state)
     assert res == state
   end
 

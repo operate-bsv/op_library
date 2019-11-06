@@ -1,9 +1,9 @@
-defmodule FB.Library do
+defmodule Operate.Library do
   use Mix.Project
 
   def project do
     [
-      app: :fb_library,
+      app: :op_library,
       version: "0.1.0-dev.1",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
@@ -14,7 +14,7 @@ defmodule FB.Library do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:fb_agent, git: "https://github.com/functional-bitcoin/agent.git"},
+      {:operate, git: "https://github.com/operate-bsv/agent.git"},
       {:luerl, git: "https://github.com/libitx/luerl.git", branch: "develop", override: true},
       {:tesla, "~> 1.2.1"}
     ]
