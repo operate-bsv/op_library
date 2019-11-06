@@ -24,14 +24,14 @@ defmodule Agent.ExecTest do
     end
 
     test "must return the result of the given txid", ctx do
-      txid = "c081e7158d76b6962ecbd3b51182aac249615743574464aa3b96fce4a998858d"
+      txid = "65aa086b2c54d5d792973db425b70712a708a115cd71fb67bd780e8ad9513ac9"
       res = %Operate.Cell{op: ctx.op, params: [txid]}
       |> Operate.Cell.exec!(ctx.vm)
       assert Map.keys(res) == ["name", "numbers"]
     end
 
     test "must accept binary txid", ctx do
-      txid = "c081e7158d76b6962ecbd3b51182aac249615743574464aa3b96fce4a998858d"
+      txid = "65aa086b2c54d5d792973db425b70712a708a115cd71fb67bd780e8ad9513ac9"
       |> Base.decode16!(case: :lower)
       res = %Operate.Cell{op: ctx.op, params: [txid]}
       |> Operate.Cell.exec!(ctx.vm)
@@ -54,7 +54,7 @@ defmodule Agent.ExecTest do
     end
 
     test "must return the result of the given txid", ctx do
-      txid = "c081e7158d76b6962ecbd3b51182aac249615743574464aa3b96fce4a998858d"
+      txid = "65aa086b2c54d5d792973db425b70712a708a115cd71fb67bd780e8ad9513ac9"
       res = %Operate.Cell{op: ctx.op, params: [txid]}
       |> Operate.Cell.exec!(ctx.vm, state: ["testing123"])
       assert List.first(res["numbers"]) == "testing123"
