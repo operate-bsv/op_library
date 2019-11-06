@@ -12,14 +12,14 @@ defmodule Agent.ExecTest do
 
   describe "Call without a state" do
     setup do
-      #Tesla.Mock.mock fn env ->
-      #  cond do
-      #    String.match?(env.url, ~r/bob.planaria.network/) ->
-      #      File.read!("test/mocks/agent_exec_get_tape.json") |> Jason.decode! |> Tesla.Mock.json
-      #    String.match?(env.url, ~r/functions.chronoslabs.net/) ->
-      #      File.read!("test/mocks/agent_exec_get_procs.json") |> Jason.decode! |> Tesla.Mock.json
-      #  end
-      #end
+      Tesla.Mock.mock fn env ->
+        cond do
+          String.match?(env.url, ~r/bob.planaria.network/) ->
+            File.read!("test/mocks/agent_exec_get_tape.json") |> Jason.decode! |> Tesla.Mock.json
+          String.match?(env.url, ~r/api.operatebsv.org/) ->
+            File.read!("test/mocks/agent_exec_get_ops.json") |> Jason.decode! |> Tesla.Mock.json
+        end
+      end
       :ok
     end
 
@@ -42,14 +42,14 @@ defmodule Agent.ExecTest do
 
   describe "Call with a state" do
     setup do
-      #Tesla.Mock.mock fn env ->
-      #  cond do
-      #    String.match?(env.url, ~r/bob.planaria.network/) ->
-      #      File.read!("test/mocks/agent_exec_get_tape.json") |> Jason.decode! |> Tesla.Mock.json
-      #    String.match?(env.url, ~r/functions.chronoslabs.net/) ->
-      #      File.read!("test/mocks/agent_exec_get_procs.json") |> Jason.decode! |> Tesla.Mock.json
-      #  end
-      #end
+      Tesla.Mock.mock fn env ->
+        cond do
+          String.match?(env.url, ~r/bob.planaria.network/) ->
+            File.read!("test/mocks/agent_exec_get_tape.json") |> Jason.decode! |> Tesla.Mock.json
+          String.match?(env.url, ~r/api.operatebsv.org/) ->
+            File.read!("test/mocks/agent_exec_get_ops.json") |> Jason.decode! |> Tesla.Mock.json
+        end
+      end
       :ok
     end
 
