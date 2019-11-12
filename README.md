@@ -1,8 +1,10 @@
 # Operate | Library
 
-Operate is an extensible Bitcoin meta programming protocol. It offers a way of running programs encapsulated in Bitcoin (SV) transactions that can be be used to process data, perform calculations and operations, and return any computable value.
+Library of Ops (Operate functions) published by Chronos Labs.
 
-**Operate | Library** is library of Ops published by Chronos Labs.
+## About Operate
+
+Operate is a toolset to help developers build applications, games and services on top of Bitcoin (SV). It lets you write functions, called "Ops", and enables transactions to become small but powerful programs, capable of delivering new classes of services layered over Bitcoin.
 
 More infomation:
 
@@ -16,6 +18,6 @@ Refer to [Operate | CLI](https://github.com/operate-bsv/op_cli) to get started.
 
 ## License
 
-[MIT](https://github.com/operate-bsv/op_library/blob/master/LICENSE.md)
+[MIT License](https://github.com/operate-bsv/op_library/blob/master/LICENSE.md).
 
 © Copyright 2019 Chronos Labs Ltd.
