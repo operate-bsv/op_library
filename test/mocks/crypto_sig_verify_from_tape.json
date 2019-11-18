@@ -1,0 +1,92 @@
+{
+  "i": 1,
+  "in": [],
+  "out": [
+    {
+      "i": 0,
+      "tape": [
+        {
+          "cell": [
+            {
+              "i": 0,
+              "ii": 0,
+              "op": 106,
+              "ops": "OP_RETURN"
+            }
+          ],
+          "i": 0
+        },
+        {
+          "cell": [
+            {
+              "b": "JHJlZg==",
+              "i": 0,
+              "ii": 1,
+              "s": "$ref"
+            },
+            {
+              "b": "SU53QnlGS0lhMkQ5WkNoeHRsWUkvTU5ISUwzQ2l1L3pyWU04TTFSVUt3UEdOMForZzBhdVh0dldBbVdySENRZnNhclZkaW1uOTk5OXBneWM2VFRjdEFvPQ==",
+              "i": 1,
+              "ii": 2,
+              "s": "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo="
+            },
+            {
+              "b": "MUd2ZjFHdXBLd0FMck5pdXc5dEhvUWcyOHJQNWJQSExDZw==",
+              "i": 2,
+              "ii": 3,
+              "s": "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"
+            }
+          ],
+          "i": 1
+        },
+        {
+          "cell": [
+            {
+              "b": "9M8zOA==",
+              "i": 0,
+              "ii": 5,
+              "s": "��38"
+            },
+            {
+              "b": "dGV4dC9wbGFpbg==",
+              "i": 1,
+              "ii": 6,
+              "s": "text/plain"
+            },
+            {
+              "b": "SGVsbG8gd29ybGQ=",
+              "i": 2,
+              "ii": 7,
+              "s": "Hello world"
+            }
+          ],
+          "i": 2
+        },
+        {
+          "cell": [
+            {
+              "b": "nvX9XA==",
+              "i": 0,
+              "ii": 9,
+              "s": "���\\"
+            },
+            {
+              "b": "Zm9v",
+              "i": 1,
+              "ii": 10,
+              "s": "foo"
+            },
+            {
+              "b": "YmFy",
+              "i": 2,
+              "ii": 11,
+              "s": "bar"
+            }
+          ],
+          "i": 3
+        }
+      ]
+    }
+  ],
+  "txid": "abcdef"
+}
