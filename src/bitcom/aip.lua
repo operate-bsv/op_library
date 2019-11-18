@@ -34,7 +34,7 @@ contains the protocol paramaters, plus a `verified` boolean attribute.
     #   type: "text/plain",
     # }
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, algo, address, signature, ...)
@@ -61,7 +61,7 @@ return function(state, algo, address, signature, ...)
   -- If no indices provided, assume all fields prior to current global index
   -- Otherwise, get fields by index as specified
   if next({...}) == nil then
-    local max = ctx.global_index or 0
+    local max = ctx.data_index or 0
     for idx = 0, max-1 do
       table.insert(indices, idx)
     end

@@ -39,7 +39,7 @@ attributes.
     #   type: "application/json",
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_bin)
@@ -84,7 +84,7 @@ return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_b
   -- If no indices provided, assume all fields prior to current global index
   -- Otherwise, get fields by index as specified
   if idx_usize == 0 then
-    local max = ctx.global_index or 0
+    local max = ctx.data_index or 0
     for idx = 0, max-1 do
       table.insert(indices, idx)
     end
