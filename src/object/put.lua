@@ -1,10 +1,11 @@
 --[[
-Extends the state table at the given path, and puts a new object from the
-given keys and values (overriding values where keys already exist).
+Extends the state at the specifed path with the given key/value pairs
+(overriding values where keys already exist).
 
 Takes a variable length number of arguments and maps them into key value pairs.
-Where a key is a path seperated by `.`, the table is traversed creating a nested
-table until the value is set on the tip.
+Each key must be a alphanumeric path. Dot delimeted paths are iterated over
+setting the value on a deeply nested table. If a key ends in `[]` the value is
+pushed in to an array.
 
 ## Examples
 
@@ -22,7 +23,7 @@ table until the value is set on the tip.
     #   }
     # }
 
-@version 0.1.0
+@version 0.2.0
 @author Libs
 ]]--
 return function(state, path, ...)
@@ -32,22 +33,34 @@ return function(state, path, ...)
     type(state) == 'table',
     'Invalid state. Must receive a table.')
   assert(
-    type(path) == 'string' and string.len(path) > 0,
+    type(path) == 'string' and string.match(path, '^[%a%d%.]+%[?%]?$'),
     'Invalid path. Must receive a string.')
+
+  -- Helper function to put the value on the tip of the path. If the path ends
+  -- with `[]` then the value is placed in an integer indexed table.
+  local function put_value(obj, path, value)
+    if string.match(path, '%[%]$') then
+      local p = string.match(path, '^[%a%d]+')
+      if type(obj[p]) ~= 'table' then obj[p] = {} end
+      table.insert(obj[p], value)
+    else
+      obj[path] = value
+    end
+  end
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
   -- extending the state object or setting the value on the tip.
-  local function extend(state, path, value)
+  local function extend(obj, path, value)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
       if i == #keys then
-        state[k] = value
-      elseif type(state[k]) ~= 'table' then
-        state[k] = {}
+        put_value(obj, k, value)
+      elseif type(obj[k]) ~= 'table' then
+        obj[k] = {}
       end
-      state = state[k]
+      obj = obj[k]
     end
   end
 
@@ -57,7 +70,7 @@ return function(state, path, ...)
     if math.fmod(n, 2) > 0 then
       local path = select(n, ...)
       local value = select(n+1, ...)
-      if path ~= nil and string.len(path) > 0 then
+      if path ~= nil and string.match(path, '^[%a%d%.]+%[?%]?$') then
         extend(obj, path, value)
       end
     end

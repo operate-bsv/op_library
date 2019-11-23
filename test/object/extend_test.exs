@@ -30,6 +30,12 @@ defmodule Object.ExtendTest do
       assert res["foo"]["baz"] == 2
     end
 
+    test "must add values to arrays", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar[]", 1, "foo.bar[]", 2]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert res["foo"]["bar"] == [1,2]
+    end
+
     test "must overwrite existing keys", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["foo.bar", 1, "foo.baz", 2, "foo.bar.baz", 3]}
       |> Operate.Cell.exec!(ctx.vm)
@@ -50,7 +56,6 @@ defmodule Object.ExtendTest do
       |> Operate.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
       assert res == %{"foo" => %{"bar" => 1, "baz" => "x", "qux" => "y"}}
     end
-  end
-  
+  end  
 
 end

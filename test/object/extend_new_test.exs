@@ -17,6 +17,12 @@ defmodule Object.ExtendNewTest do
       assert res["c"] == 3
     end
 
+    test "must add values to arrays", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar[]", 1, "foo.bar[]", 2]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert res["foo"]["bar"] == [1,2]
+    end
+
     test "wont overwrite existing keys", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["foo.bar", 1, "foo.baz", 2, "foo.bar.baz", 3]}
       |> Operate.Cell.exec!(ctx.vm)

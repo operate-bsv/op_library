@@ -22,6 +22,18 @@ defmodule Object.PutTest do
       assert res["foo"]["bar"]["baz"] == %{"a" => 1, "b" => 2}
     end
 
+    test "must add object array", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar[]", "a", 1, "b", 2]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert res["foo"]["bar"] == [%{"a" => 1, "b" => 2}]
+    end
+
+    test "must add values to arrays", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["foo.bar", "baz[]", 1, "baz[]", 2]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert res["foo"]["bar"]["baz"] == [1,2]
+    end
+
     test "must overwrite existing keys", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["foo.bar", "baz.qux", 1, "baz", 3]}
       |> Operate.Cell.exec!(ctx.vm)
