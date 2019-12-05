@@ -9,7 +9,7 @@ defmodule Crypto.SigVerifyToTest do
   end
 
 
-  describe "simple example withour signed content" do
+  describe "simple example without signed content" do
     test "must set the correct attributes", ctx do
       res = %Operate.Cell{op: ctx.op, data_index: 0, params: ["##dummy_sig##", "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"]}
       |> Operate.Cell.exec!(ctx.vm)
@@ -145,7 +145,10 @@ defmodule Crypto.SigVerifyToTest do
       res = ctx.tape.cells
       |> Enum.at(1)
       |> Map.put(:op, ctx.op)
-      |> Map.put(:params, ["H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I=", "1LFH56bwgkTLFeu53wtLdFH3L2YYQUh7yJ"])
+      |> Map.put(:params, [
+          "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I=",
+          "1LFH56bwgkTLFeu53wtLdFH3L2YYQUh7yJ"
+        ])
       |> Operate.Cell.exec!(vm)
       |> Map.get("signatures")
       |> List.first

@@ -46,7 +46,7 @@ The `pubkey` parameter can be in any of the following formats:
     #   ]
     # }
 
-@version 0.2.0
+@version 0.2.1
 @author Libs
 ]]--
 return function(state, signature, pubkey)
@@ -62,10 +62,10 @@ return function(state, signature, pubkey)
     'Invalid state. Must receive a table.')
   assert(
     not isblank(signature),
-    'Invalid parameters. Must receive encryped data.')
+    'Invalid parameters. Must receive signature.')
   assert(
     not isblank(pubkey),
-    'Invalid parameters. Must receive encryped data.')
+    'Invalid parameters. Must receive public key.')
 
   -- Build the signature object
   local sig = {

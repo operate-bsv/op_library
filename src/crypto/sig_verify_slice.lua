@@ -1,10 +1,9 @@
 --[[
 Verifies the given signature using the public key. The message the signature is
-verified against is assumed to be all of the data **BEFORE** the cell containing
-this Op.
+verified against is determined by the specified slice index and length.
 
-The signed message must be all of the tape's prior data concatentated, then
-hashed using the SHA-256 algorithm.
+The signed message must be all of the data determined by the specified slice
+range, concatentated, then hashed using the SHA-256 algorithm.
 
 The `signature` paramater can be in any of the following formats:
 
@@ -17,34 +16,44 @@ The `pubkey` parameter can be in any of the following formats:
   * Hex encoded string
   * A Bitcoin address string
 
+The `slice_idx` and `slice_len` parameters specifiy the slice range to verify
+the signature against. The values can either be utf8 encoded or binary integers.
+
 ## Examples
 
-    OP_FALSE OP_RETURN
-      0xF4CF3338
-        "text/plain"
-        "Hello world"
-        |
+    OP_FALSE OP_RETURN  # 0-1
+      0xF4CF3338        # 2
+        "text/plain"    # 3
+        "Hello world"   # 4
+        |               # 5
+      0x9EF5FD5C        # 6
+        "foo"           # 7
+        "bar"           # 8
+        |               # 9
       $REF
-        "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I="
+        "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M="
         "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+        "3"
+        "6"
     # {
     #   data: "Hello world",
+    #   foo: "bar",
     #   type: "text/plain",
     #   signatures: [
     #     {
-    #       cell: 2,
-    #       hash: "03c1ccb5143e51a82ff46d65a034540ea1d084dbf2635828b0514a486e0a7952",
+    #       cell: 3,
+    #       hash: "b9d9129b78b2f84a1c53259ca3c57ddd7f882549380304091a568b0a26127a5d",
     #       pubkey: "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw",
-    #       signature: "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I=",
+    #       signature: "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M=",
     #       verified: true
     #     }
     #   ]
     # }
 
-@version 0.2.2
+@version 0.1.0
 @author Libs
 ]]--
-return function(state, signature, pubkey)
+return function(state, signature, pubkey, slice_idx, slice_len)
   state = state or {}
 
   -- Local helper method to determine if a string is blank
@@ -61,6 +70,12 @@ return function(state, signature, pubkey)
   assert(
     not isblank(pubkey),
     'Invalid parameters. Must receive public key.')
+  assert(
+    not isblank(slice_idx),
+    'Invalid cell index. Must receive slice index.')
+  assert(
+    not isblank(slice_len),
+    'Invalid cell index. Must receive slice length.')
 
   -- Build the signature object
   local sig = {
@@ -80,11 +95,25 @@ return function(state, signature, pubkey)
     pubkey = base.decode16(pubkey)
   end
 
+  -- Convert slice index to integer
+  if string.match(slice_idx, '^[0-9]+$') then
+    slice_idx = tonumber(slice_idx)
+  else
+    slice_idx = table.unpack(string.unpack('I1', slice_idx))
+  end
+
+  -- Convert slice length to integer
+  if string.match(slice_len, '^[0-9]+$') then
+    slice_len = tonumber(slice_len)
+  else
+    slice_len = table.unpack(string.unpack('I1', slice_len))
+  end
+
   -- Get tape data, then iterate over tape data to build message for verification
   local tape = ctx.get_tape()
   if tape ~= nil then
     local message = ''
-    for idx = 1, ctx.data_index do
+    for idx = slice_idx + 1, slice_idx + slice_len do
       message = message .. tape[idx].b
     end
     local hash = crypto.hash.sha256(message)

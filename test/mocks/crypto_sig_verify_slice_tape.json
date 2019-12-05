@@ -1,0 +1,104 @@
+{
+  "i": 1,
+  "in": [],
+  "out": [
+    {
+      "i": 0,
+      "tape": [
+        {
+          "cell": [
+            {
+              "i": 0,
+              "ii": 0,
+              "op": 106,
+              "ops": "OP_RETURN"
+            }
+          ],
+          "i": 0
+        },
+        {
+          "cell": [
+            {
+              "b": "9M8zOA==",
+              "i": 0,
+              "ii": 1,
+              "s": "��38"
+            },
+            {
+              "b": "dGV4dC9wbGFpbg==",
+              "i": 1,
+              "ii": 2,
+              "s": "text/plain"
+            },
+            {
+              "b": "SGVsbG8gd29ybGQ=",
+              "i": 2,
+              "ii": 3,
+              "s": "Hello world"
+            }
+          ],
+          "i": 1
+        },
+        {
+          "cell": [
+            {
+              "b": "nvX9XA==",
+              "i": 0,
+              "ii": 5,
+              "s": "���\\"
+            },
+            {
+              "b": "Zm9v",
+              "i": 1,
+              "ii": 6,
+              "s": "foo"
+            },
+            {
+              "b": "YmFy",
+              "i": 2,
+              "ii": 7,
+              "s": "bar"
+            }
+          ],
+          "i": 2
+        },
+        {
+          "cell": [
+            {
+              "b": "JHJlZg==",
+              "i": 0,
+              "ii": 9,
+              "s": "$ref"
+            },
+            {
+              "b": "SDdyZXRzMUZjZlZFVzd6SW5QNWZiWG9nb2gvM1RrSm1yTXJBcm43b0s3UHFXR0I1bzBFQ0FLZ2YyUGo4ZUwxZlV4V3YycEhCbko1RGJ1U2dGSjhzODhZPQ==",
+              "i": 1,
+              "ii": 10,
+              "s": "H7rets1FcfVEW7zInP5fbXogoh/3TkJmrMrArn7oK7PqWGB5o0ECAKgf2Pj8eL1fUxWv2pHBnJ5DbuSgFJ8s88Y="
+            },
+            {
+              "b": "MTdBcFdHcFF2dlVNTXE5UWhpc2JtQmlmR3FvQ1VGSEdhdw==",
+              "i": 2,
+              "ii": 11,
+              "s": "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+            },
+            {
+              "b": "Mg==",
+              "i": 3,
+              "ii": 12,
+              "s": "2"
+            },
+            {
+              "b": "Ng==",
+              "i": 4,
+              "ii": 13,
+              "s": "6"
+            }
+          ],
+          "i": 3
+        }
+      ]
+    }
+  ],
+  "txid": "abcdef"
+}

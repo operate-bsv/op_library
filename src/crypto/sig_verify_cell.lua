@@ -1,10 +1,9 @@
 --[[
 Verifies the given signature using the public key. The message the signature is
-verified against is assumed to be all of the data **BEFORE** the cell containing
-this Op.
+verified against is all of the data of the specified cell.
 
-The signed message must be all of the tape's prior data concatentated, then
-hashed using the SHA-256 algorithm.
+The signed message must be all of the cell's data concatentated, then hashed
+using the SHA-256 algorithm.
 
 The `signature` paramater can be in any of the following formats:
 
@@ -17,34 +16,43 @@ The `pubkey` parameter can be in any of the following formats:
   * Hex encoded string
   * A Bitcoin address string
 
+The `cell_idx` parameter is the index of the cell you wish to verify the
+signature against. The value can either be utf8 encoded or a binary integer.
+
 ## Examples
 
-    OP_FALSE OP_RETURN
-      0xF4CF3338
+    OP_FALSE OP_RETURN  # cell 0
+      0xF4CF3338        # cell 1
         "text/plain"
         "Hello world"
         |
-      $REF
-        "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I="
+      0x9EF5FD5C        # cell 2
+        "foo"
+        "bar"
+        |
+      $REF              # cell 3
+        "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M="
         "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+        "2"
     # {
     #   data: "Hello world",
+    #   foo: "bar",
     #   type: "text/plain",
     #   signatures: [
     #     {
-    #       cell: 2,
-    #       hash: "03c1ccb5143e51a82ff46d65a034540ea1d084dbf2635828b0514a486e0a7952",
+    #       cell: 3,
+    #       hash: "b9d9129b78b2f84a1c53259ca3c57ddd7f882549380304091a568b0a26127a5d",
     #       pubkey: "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw",
-    #       signature: "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I=",
+    #       signature: "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M=",
     #       verified: true
     #     }
     #   ]
     # }
 
-@version 0.2.2
+@version 0.1.0
 @author Libs
 ]]--
-return function(state, signature, pubkey)
+return function(state, signature, pubkey, cell_idx)
   state = state or {}
 
   -- Local helper method to determine if a string is blank
@@ -61,6 +69,9 @@ return function(state, signature, pubkey)
   assert(
     not isblank(pubkey),
     'Invalid parameters. Must receive public key.')
+  assert(
+    not isblank(cell_idx),
+    'Invalid cell index. Must receive cell index.')
 
   -- Build the signature object
   local sig = {
@@ -80,12 +91,19 @@ return function(state, signature, pubkey)
     pubkey = base.decode16(pubkey)
   end
 
-  -- Get tape data, then iterate over tape data to build message for verification
-  local tape = ctx.get_tape()
-  if tape ~= nil then
+  -- Convert cell index to integer
+  if string.match(cell_idx, '^[0-9]+$') then
+    cell_idx = tonumber(cell_idx)
+  else
+    cell_idx = table.unpack(string.unpack('I1', cell_idx))
+  end
+
+  -- Get cell data, then iterate over cell data to build message for verification
+  local cell = ctx.get_cell(cell_idx)
+  if cell ~= nil then
     local message = ''
-    for idx = 1, ctx.data_index do
-      message = message .. tape[idx].b
+    for idx = 1, #cell do
+      message = message .. cell[idx].b
     end
     local hash = crypto.hash.sha256(message)
     sig.hash = base.encode16(hash)
