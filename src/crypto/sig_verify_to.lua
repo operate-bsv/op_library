@@ -4,9 +4,12 @@ verified against is assumed to be all of the data **BEFORE** the cell containing
 this Op.
 
 The signed message must be all of the tape's prior data concatentated, then
-hashed using the SHA-256 algorithm, then hex encoded.
+hashed using the SHA-256 algorithm.
 
-The `signature` paramater must be a Base64 encoded string.
+The `signature` paramater can be in any of the following formats:
+
+  * Raw 65 byte binary signature
+  * Base64 encoded string
 
 The `pubkey` parameter can be in any of the following formats:
 
@@ -38,7 +41,7 @@ The `pubkey` parameter can be in any of the following formats:
     #   ]
     # }
 
-@version 0.1.0
+@version 0.2.0
 @author Libs
 ]]--
 return function(state, signature, pubkey)
@@ -47,13 +50,6 @@ return function(state, signature, pubkey)
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''
-  end
-
-  -- Local helper method for decoding from hex string
-  local function fromhex(str)
-    return (string.gsub(str, '..', function(c)
-      return string.char(tonumber(c, 16))
-    end))
   end
 
   assert(
@@ -74,9 +70,14 @@ return function(state, signature, pubkey)
     verified = false
   }
 
+  -- If the signature is base64 encoded then decode to binary string
+  if string.len(signature) == 88 and string.match(signature, '^[a-zA-Z0-9+/=]+$') then
+    signature = base.decode64(signature)
+  end
+
   -- If the pubkey is hex encoded then decode to binary string
   if string.len(pubkey) == 66 and string.match(pubkey, '^[a-fA-F0-9]+$') then
-    pubkey = fromhex(pubkey)
+    pubkey = base.decode16(pubkey)
   end
 
   -- Get tape data, then iterate over tape data to build message for verification
@@ -86,8 +87,9 @@ return function(state, signature, pubkey)
     for idx = 1, ctx.data_index do
       message = message .. tape[idx].b
     end
-    sig.hash = crypto.hash.sha256(message, {encoding = 'hex'})
-    sig.verified = crypto.bitcoin_message.verify(signature, sig.hash, pubkey)
+    local hash = crypto.hash.sha256(message)
+    sig.hash = base.encode16(hash)
+    sig.verified = crypto.bitcoin_message.verify(signature, hash, pubkey, {encoding = 'binary'})
   end
 
   -- Add signature to state. Table allows pushing multiple signatures to state

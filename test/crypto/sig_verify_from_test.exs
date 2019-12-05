@@ -11,14 +11,14 @@ defmodule Crypto.SigVerifyFromTest do
 
   describe "simple example withour signed content" do
     test "must set the correct attributes", ctx do
-      res = %Operate.Cell{op: ctx.op, data_index: 0, params: ["##dummy_sig##", "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"]}
+      res = %Operate.Cell{op: ctx.op, data_index: 0, params: ["##dummy_sig##", "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"]}
       |> Operate.Cell.exec!(ctx.vm)
       |> Map.get("signatures")
       |> List.first
 
       assert res["cell"] == 0
       assert res["signature"] == "##dummy_sig##"
-      assert res["pubkey"] == "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"
+      assert res["pubkey"] == "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
       assert res["verified"] == false
     end
 
@@ -31,7 +31,7 @@ defmodule Crypto.SigVerifyFromTest do
 
     test "must raise when signature is missing", ctx do
       assert_raise RuntimeError, ~r/^Lua Error/, fn ->
-        %Operate.Cell{op: ctx.op, params: [nil, "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"]}
+        %Operate.Cell{op: ctx.op, params: [nil, "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"]}
         |> Operate.Cell.exec!(ctx.vm)
       end
     end
@@ -62,8 +62,33 @@ defmodule Crypto.SigVerifyFromTest do
 
       assert res["cell"] == 1
       assert res["hash"] == "3fa2f0e6ed5f72c78f8cb90142ece18f4d210f282740cfeba6bc9363b76ea5df"
-      assert res["pubkey"] == "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"
-      assert res["signature"] == "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo="
+      assert res["pubkey"] == "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+      assert res["signature"] == "IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ="
+      assert res["verified"] == true
+    end
+
+    test "must verify with raw signature", ctx do
+      vm = ctx.vm
+      |> Operate.VM.set!("ctx.tx", ctx.tape.tx)
+      |> Operate.VM.set!("ctx.tape_index", ctx.tape.index)
+
+      sig = <<32, 71, 236, 59, 9, 184, 250, 77, 57, 52, 48, 151, 46, 191, 122, 40, 29, 3,
+              60, 98, 89, 99, 174, 157, 66, 180, 239, 183, 254, 23, 7, 92, 151, 4, 241, 123,
+              219, 161, 54, 69, 84, 159, 89, 173, 70, 114, 88, 169, 172, 245, 194, 85, 7,
+              154, 144, 75, 250, 53, 65, 1, 60, 161, 193, 113, 132>>
+
+      res = ctx.tape.cells
+      |> Enum.at(0)
+      |> Map.put(:op, ctx.op)
+      |> Map.put(:params, [
+          sig,
+          "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+        ])
+      |> Operate.Cell.exec!(vm)
+      |> Map.get("signatures")
+      |> List.first
+
+      assert res["signature"] == sig
       assert res["verified"] == true
     end
 
@@ -72,20 +97,21 @@ defmodule Crypto.SigVerifyFromTest do
       |> Operate.VM.set!("ctx.tx", ctx.tape.tx)
       |> Operate.VM.set!("ctx.tape_index", ctx.tape.index)
 
+      pbkey = <<2, 109, 186, 127, 25, 192, 58, 202, 83, 145, 224, 117, 226, 188, 158, 20,
+                131, 215, 165, 252, 184, 165, 133, 5, 206, 78, 198, 16, 142, 2, 230, 20, 97>>
+
       res = ctx.tape.cells
       |> Enum.at(0)
       |> Map.put(:op, ctx.op)
       |> Map.put(:params, [
-          "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo=",
-          <<2, 246, 210, 133, 124, 204, 248, 202, 254, 156, 143, 219, 102, 91, 215, 16,
-          227, 184, 153, 12, 69, 133, 124, 205, 239, 215, 91, 190, 36, 162, 13, 78, 98>>
+          "IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ=",
+          pbkey
         ])
       |> Operate.Cell.exec!(vm)
       |> Map.get("signatures")
       |> List.first
 
-      assert res["pubkey"] == <<2, 246, 210, 133, 124, 204, 248, 202, 254, 156, 143, 219, 102, 91, 215, 16,
-                              227, 184, 153, 12, 69, 133, 124, 205, 239, 215, 91, 190, 36, 162, 13, 78, 98>>
+      assert res["pubkey"] == pbkey
       assert res["verified"] == true
     end
 
@@ -94,18 +120,20 @@ defmodule Crypto.SigVerifyFromTest do
       |> Operate.VM.set!("ctx.tx", ctx.tape.tx)
       |> Operate.VM.set!("ctx.tape_index", ctx.tape.index)
 
+      pbkey = "026dba7f19c03aca5391e075e2bc9e1483d7a5fcb8a58505ce4ec6108e02e61461"
+
       res = ctx.tape.cells
       |> Enum.at(0)
       |> Map.put(:op, ctx.op)
       |> Map.put(:params, [
-          "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo=",
-          "02f6d2857cccf8cafe9c8fdb665bd710e3b8990c45857ccdefd75bbe24a20d4e62"
+          "IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ=",
+          pbkey
         ])
       |> Operate.Cell.exec!(vm)
       |> Map.get("signatures")
       |> List.first
 
-      assert res["pubkey"] == "02f6d2857cccf8cafe9c8fdb665bd710e3b8990c45857ccdefd75bbe24a20d4e62"
+      assert res["pubkey"] == pbkey
       assert res["verified"] == true
     end
 
@@ -117,7 +145,7 @@ defmodule Crypto.SigVerifyFromTest do
       res = ctx.tape.cells
       |> Enum.at(0)
       |> Map.put(:op, ctx.op)
-      |> Map.put(:params, ["INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo=", "1LFH56bwgkTLFeu53wtLdFH3L2YYQUh7yJ"])
+      |> Map.put(:params, ["IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ=", "1LFH56bwgkTLFeu53wtLdFH3L2YYQUh7yJ"])
       |> Operate.Cell.exec!(vm)
       |> Map.get("signatures")
       |> List.first

@@ -4,9 +4,12 @@ verified against is assumed to be all of the data **AFTER** the cell containing
 this Op.
 
 The signed message must be all of the tape's following data concatentated, then
-hashed using the SHA-256 algorithm, then hex encoded.
+hashed using the SHA-256 algorithm.
 
-The `signature` paramater must be a Base64 encoded string.
+The `signature` paramater can be in any of the following formats:
+
+  * Raw 65 byte binary signature
+  * Base64 encoded string
 
 The `pubkey` parameter can be in any of the following formats:
 
@@ -18,8 +21,8 @@ The `pubkey` parameter can be in any of the following formats:
 
     OP_FALSE OP_RETURN
       $REF
-        "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo="
-        "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"
+        "IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ="
+        "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
         |
       0xF4CF3338
         "text/plain"
@@ -36,14 +39,14 @@ The `pubkey` parameter can be in any of the following formats:
     #     {
     #       cell: 1,
     #       hash: "3fa2f0e6ed5f72c78f8cb90142ece18f4d210f282740cfeba6bc9363b76ea5df",
-    #       pubkey: "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg",
-    #       signature: "INwByFKIa2D9ZChxtlYI/MNHIL3Ciu/zrYM8M1RUKwPGN0Z+g0auXtvWAmWrHCQfsarVdimn9999pgyc6TTctAo=",
+    #       pubkey: "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw",
+    #       signature: "IEfsOwm4+k05NDCXLr96KB0DPGJZY66dQrTvt/4XB1yXBPF726E2RVSfWa1GcliprPXCVQeakEv6NUEBPKHBcYQ=",
     #       verified: true
     #     }
     #   ]
     # }
 
-@version 0.1.0
+@version 0.2.0
 @author Libs
 ]]--
 return function(state, signature, pubkey)
@@ -52,13 +55,6 @@ return function(state, signature, pubkey)
   -- Local helper method to determine if a string is blank
   local function isblank(str)
     return str == nil or str == ''
-  end
-
-  -- Local helper method for decoding from hex string
-  local function fromhex(str)
-    return (string.gsub(str, '..', function(c)
-      return string.char(tonumber(c, 16))
-    end))
   end
 
   assert(
@@ -79,9 +75,14 @@ return function(state, signature, pubkey)
     verified = false
   }
 
+  -- If the signature is base64 encoded then decode to binary string
+  if string.len(signature) == 88 and string.match(signature, '^[a-zA-Z0-9+/=]+$') then
+    signature = base.decode64(signature)
+  end
+
   -- If the pubkey is hex encoded then decode to binary string
   if string.len(pubkey) == 66 and string.match(pubkey, '^[a-fA-F0-9]+$') then
-    pubkey = fromhex(pubkey)
+    pubkey = base.decode16(pubkey)
   end
 
   -- Get tape data, then iterate over tape data to build message for verification
@@ -93,8 +94,9 @@ return function(state, signature, pubkey)
     for idx = start, #tape do
       message = message .. tape[idx].b
     end
-    sig.hash = crypto.hash.sha256(message, {encoding = 'hex'})
-    sig.verified = crypto.bitcoin_message.verify(signature, sig.hash, pubkey)
+    local hash = crypto.hash.sha256(message)
+    sig.hash = base.encode16(hash)
+    sig.verified = crypto.bitcoin_message.verify(signature, hash, pubkey, {encoding = 'binary'})
   end
 
   -- Add signature to state. Table allows pushing multiple signatures to state
