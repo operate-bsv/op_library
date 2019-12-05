@@ -25,8 +25,8 @@ The `pubkey` parameter can be in any of the following formats:
         "Hello world"
         |
       $REF
-        "HxaO8kU3zH0zEtGJjtk71fw5RKx9mAB7ywjKCgvKkL40Mo6xTpYhyKYQshnC05BIA4Ulor1bsgIPKp2trrTr5Nw="
-        "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg"
+        "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I="
+        "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
     # {
     #   data: "Hello world",
     #   type: "text/plain",
@@ -34,14 +34,14 @@ The `pubkey` parameter can be in any of the following formats:
     #     {
     #       cell: 2,
     #       hash: "03c1ccb5143e51a82ff46d65a034540ea1d084dbf2635828b0514a486e0a7952",
-    #       pubkey: "1Gvf1GupKwALrNiuw9tHoQg28rP5bPHLCg",
-    #       signature: "HxaO8kU3zH0zEtGJjtk71fw5RKx9mAB7ywjKCgvKkL40Mo6xTpYhyKYQshnC05BIA4Ulor1bsgIPKp2trrTr5Nw=",
+    #       pubkey: "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw",
+    #       signature: "H0ZSB82auZo8N8shRJ83Yi2mgp6ObHG7MFwRG/mbufq5c5xcAecgzModbLJZ04KrVqNFH7NmRMNhCvbquGGTS7I=",
     #       verified: true
     #     }
     #   ]
     # }
 
-@version 0.2.0
+@version 0.2.1
 @author Libs
 ]]--
 return function(state, signature, pubkey)
