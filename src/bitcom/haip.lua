@@ -39,7 +39,7 @@ attributes.
     #   type: "application/json",
     # }
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_bin)
@@ -107,13 +107,6 @@ return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_b
     end
   end
 
-  -- Local helper method for encoding a string into hex
-  local function tohex(str)
-    return (string.gsub(str, '.', function (c)
-      return string.format('%02x', string.byte(c))
-    end))
-  end
-
   -- Get tape data, then iterate over indeces to build message for verification
   local tape = ctx.get_tape()
   if tape ~= nil then
@@ -125,7 +118,7 @@ return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_b
         message = message .. data.b
       end
     end
-    message = tohex(message)
+    message = base.encode16(message)
     haip.hash = crypto.hash[ string.lower(hash_algo) ](message, {encoding = 'hex'})
     haip.verified = crypto.bitcoin_message.verify(signature, haip.hash, address)
   end

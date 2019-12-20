@@ -19,7 +19,7 @@ The Bitkey API stores both signatures base64 encoded and the pubkey hex encoded.
     #   verified: true
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, bitkey_sig, paymail_sig, paymail, pubkey)
@@ -45,15 +45,8 @@ return function(state, bitkey_sig, paymail_sig, paymail, pubkey)
   -- Bitkey protocol address
   local bitkey_addr = '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC'
 
-  -- Local helper method for decoding hex into string
-  local function fromhex(str)
-    return (string.gsub(str, '..', function(c)
-      return string.char(tonumber(c, 16))
-    end))
-  end
-
   state.paymail = paymail
-  state.pubkey = fromhex(pubkey)
+  state.pubkey = base.decode16(pubkey)
 
   -- Verify both the bitkey and paymail signatures
   local message = crypto.hash.sha256(paymail..pubkey, {encoding = 'hex'})
