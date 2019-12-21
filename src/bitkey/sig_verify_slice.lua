@@ -1,23 +1,24 @@
 --[[
-Verifies the given signature using the public key. The message the signature is
-verified against is determined by the specified slice index and length.
+Verifies the given signature using the paymail identity. The corresponding
+public key is fetched using [Bitkey](https://bitkey.network). The message the
+signature is verified against is determined by the specified slice index and
+length.
 
 The signed message must be all of the data determined by the specified slice
-range, concatentated, then hashed using the SHA-256 algorithm.
+range, concatentated, then hashed using the SHA-256 algorithm. If using Money
+Button's Crypto Operations](https://docs.moneybutton.com/docs/mb-crypto-operations.html)
+API, sign the hash with the `dataEncoding` option set to `hex`.
 
 The `signature` paramater can be in any of the following formats:
 
   * Raw 65 byte binary signature
   * Base64 encoded string
 
-The `pubkey` parameter can be in any of the following formats:
-
-  * Raw 33 byte binary public key
-  * Hex encoded string
-  * A Bitcoin address string
-
 The `slice_idx` and `slice_len` parameters specifiy the slice range to verify
 the signature against. The values can either be utf8 encoded or binary integers.
+
+The returned `verify` function loads the paymail identity's public key and 
+verifies the signature against the hash, returning a boolean.
 
 ## Examples
 
@@ -31,8 +32,8 @@ the signature against. The values can either be utf8 encoded or binary integers.
         "bar"           # 8
         |               # 9
       $REF
-        "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M="
-        "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw"
+        "H7rets1FcfVEW7zInP5fbXogoh/3TkJmrMrArn7oK7PqWGB5o0ECAKgf2Pj8eL1fUxWv2pHBnJ5DbuSgFJ8s88Y="
+        "test@moneybutton.com"
         "3"
         "6"
     # {
@@ -43,18 +44,19 @@ the signature against. The values can either be utf8 encoded or binary integers.
     #     {
     #       cell: 3,
     #       hash: "afebc684bc475f468a7b7cac87dd04b5da4f613142003095fb6693850fac2801",
-    #       pubkey: "17ApWGpQvvUMMq9QhisbmBifGqoCUFHGaw",
-    #       signature: "H8mBei7GqDDHwOgya4GL68TFOIo1DlK0k/7s5LHWEMQ7Wd1Kpi3PDMetE/5ToUJJqYKq3lz2HY6EhbNJxe3sO2M=",
-    #       verified: true
+    #       paymail: "test@moneybutton.com",
+    #       signature: "H7rets1FcfVEW7zInP5fbXogoh/3TkJmrMrArn7oK7PqWGB5o0ECAKgf2Pj8eL1fUxWv2pHBnJ5DbuSgFJ8s88Y=",
+    #       verify: function()
     #     }
     #   ]
     # }
 
-@version 0.1.1
+@version 0.1.0
 @author Libs
 ]]--
-return function(state, signature, pubkey, slice_idx, slice_len)
+return function(state, signature, paymail, slice_idx, slice_len)
   state = state or {}
+  local hash = nil
 
   -- Local helper method to determine if a string is blank
   local function isblank(str)
@@ -68,7 +70,7 @@ return function(state, signature, pubkey, slice_idx, slice_len)
     not isblank(signature),
     'Invalid parameters. Must receive signature.')
   assert(
-    not isblank(pubkey),
+    not isblank(paymail),
     'Invalid parameters. Must receive public key.')
   assert(
     not isblank(slice_idx),
@@ -80,19 +82,13 @@ return function(state, signature, pubkey, slice_idx, slice_len)
   -- Build the signature object
   local sig = {
     cell = ctx.cell_index or 0,
-    pubkey = pubkey,
-    signature = signature,
-    verified = false
+    paymail = paymail,
+    signature = signature
   }
 
   -- If the signature is base64 encoded then decode to binary string
   if string.len(signature) == 88 and string.match(signature, '^[a-zA-Z0-9+/=]+$') then
     signature = base.decode64(signature)
-  end
-
-  -- If the pubkey is hex encoded then decode to binary string
-  if string.len(pubkey) == 66 and string.match(pubkey, '^[a-fA-F0-9]+$') then
-    pubkey = base.decode16(pubkey)
   end
 
   -- Convert slice index to integer
@@ -116,9 +112,35 @@ return function(state, signature, pubkey, slice_idx, slice_len)
     for idx = slice_idx + 1, slice_idx + slice_len do
       message = message .. tape[idx].b
     end
-    local hash = crypto.hash.sha256(message)
+    hash = crypto.hash.sha256(message)
     sig.hash = base.encode16(hash)
-    sig.verified = crypto.bitcoin_message.verify(signature, hash, pubkey, {encoding = 'binary'})
+  end
+
+  -- Define the bitkey query
+  local query = { find = {}, limit = 1 }
+  local c1 = {}
+  local c2 = {}
+  c1['out.tape.cell'] = {}
+  c1['out.tape.cell']['$elemMatch'] = {
+    s = '13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC',
+    i = 0
+  }
+  c2['out.tape.cell'] = {}
+  c2['out.tape.cell']['$elemMatch'] = {
+    s = sig.paymail,
+    i = 3
+  }
+  query.find['$and'] = {c1, c2}
+
+  -- Attach verify function. Loads the Bitkey and attempts to verify the
+  -- signature against the hash. Returns boolean.
+  function sig.verify()
+    if not hash then return false end
+    local tapes = agent.load_tapes_by(query)
+    if #tapes == 0 then return false end
+    local bitkey = agent.run_tape(tapes[1])
+    if not bitkey.verified then return false end
+    return crypto.bitcoin_message.verify(signature, hash, bitkey.pubkey, {encoding = 'binary'})
   end
 
   -- Add signature to state. Table allows pushing multiple signatures to state
