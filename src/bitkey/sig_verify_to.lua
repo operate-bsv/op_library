@@ -41,7 +41,7 @@ verifies the signature against the hash, returning a boolean.
     #   ]
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, signature, paymail)
@@ -61,7 +61,7 @@ return function(state, signature, paymail)
     'Invalid parameters. Must receive signature.')
   assert(
     not isblank(paymail),
-    'Invalid parameters. Must receive public key.')
+    'Invalid parameters. Must receive paymail address.')
 
   -- Build the signature object
   local sig = {

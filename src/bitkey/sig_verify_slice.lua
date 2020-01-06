@@ -51,7 +51,7 @@ verifies the signature against the hash, returning a boolean.
     #   ]
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, signature, paymail, slice_idx, slice_len)
@@ -71,7 +71,7 @@ return function(state, signature, paymail, slice_idx, slice_len)
     'Invalid parameters. Must receive signature.')
   assert(
     not isblank(paymail),
-    'Invalid parameters. Must receive public key.')
+    'Invalid parameters. Must receive paymail address.')
   assert(
     not isblank(slice_idx),
     'Invalid cell index. Must receive slice index.')

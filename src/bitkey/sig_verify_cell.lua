@@ -49,7 +49,7 @@ verifies the signature against the hash, returning a boolean.
     #   ]
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, signature, paymail, cell_idx)
@@ -69,7 +69,7 @@ return function(state, signature, paymail, cell_idx)
     'Invalid parameters. Must receive signature.')
   assert(
     not isblank(paymail),
-    'Invalid parameters. Must receive public key.')
+    'Invalid parameters. Must receive paymail address.')
   assert(
     not isblank(cell_idx),
     'Invalid cell index. Must receive cell index.')
