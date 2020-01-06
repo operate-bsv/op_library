@@ -106,7 +106,7 @@ return function(state, signature, paymail)
   -- signature against the hash. Returns boolean.
   function sig.verify()
     if not hash then return false end
-    local tapes = agent.load_tapes_by(query)
+    local tapes = agent.load_tapes_by(query, {tape_adapter = {'Operate.Adapter.Bob'}})
     if #tapes == 0 then return false end
     local bitkey = agent.run_tape(tapes[1])
     if not bitkey.verified then return false end
