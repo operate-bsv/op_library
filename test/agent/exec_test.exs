@@ -30,12 +30,27 @@ defmodule Agent.ExecTest do
       assert Map.keys(res) == ["name", "numbers"]
     end
 
+    test "must accept txid with explicit output index", ctx do
+      txid = "65aa086b2c54d5d792973db425b70712a708a115cd71fb67bd780e8ad9513ac9/0"
+      res = %Operate.Cell{op: ctx.op, params: [txid]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert Map.keys(res) == ["name", "numbers"]
+    end
+
     test "must accept binary txid", ctx do
       txid = "65aa086b2c54d5d792973db425b70712a708a115cd71fb67bd780e8ad9513ac9"
       |> Base.decode16!(case: :lower)
       res = %Operate.Cell{op: ctx.op, params: [txid]}
       |> Operate.Cell.exec!(ctx.vm)
       assert Map.keys(res) == ["name", "numbers"]
+    end
+
+    test "wont accept invalid txid", ctx do
+      txid = "65aa086b"
+      assert_raise RuntimeError, ~r/Invalid txid\./, fn ->
+        %Operate.Cell{op: ctx.op, params: [txid]}
+        |> Operate.Cell.exec!(ctx.vm)
+      end
     end
   end
 
