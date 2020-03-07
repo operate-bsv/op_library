@@ -28,33 +28,48 @@ changes.
     #   }
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, mode, ...)
   state = state or {}
+  state['_MAP'] = state['_MAP'] or {}
   local obj = {}
   local mode = string.upper(mode or '')
   assert(
     type(state) == 'table',
     'Invalid state type.')
   assert(
-    mode == 'SET' or mode == 'DELETE',
-    'Invalid MAP mode. Must be SET or DELETE.')
+    mode == 'SET' or mode == 'ADD' or mode == 'DELETE',
+    'Invalid MAP mode. Must be SET, ADD or DELETE.')
+
+  -- Helper function for setting a value on a target
+  local function set(target, value)
+    return value
+  end
+
+  -- Helper function for concatenating two tables
+  local function concat(target, value)
+    target = target or {}
+    for n = 1, #value do
+      target[#target+n] = value[n]
+    end
+    return target
+  end
 
   -- Helper function to extend the given object with the path and value.
   -- Splits the path into an array of keys and iterrates over each, either
   -- extending the state object or setting the value on the tip.
-  local function extend(state, path, value)
+  local function extend(obj, path, value, callback)
     local keys = {}
     string.gsub(path, '[^%.]+', function(k) table.insert(keys, k) end)
     for i, k in ipairs(keys) do
       if i == #keys then
-        state[k] = value
-      elseif type(state[k]) ~= 'table' then
-        state[k] = {}
+        obj[k] = callback(obj[k], value)
+      elseif type(obj[k]) ~= 'table' then
+        obj[k] = {}
       end
-      state = state[k]
+      obj = obj[k]
     end
   end
 
@@ -74,9 +89,9 @@ return function(state, mode, ...)
     end
   end
 
+  -- Iterrate over each vararg pair to get the path and value.
+  -- Unless path is blank, the state is extended.
   if mode == 'SET' then
-    -- Iterrate over each vararg pair to get the path and value
-    -- Unless path is blank, the state is extended
     for n = 1, select('#', ...) do
       if math.fmod(n, 2) > 0 then
         local path = select(n, ...)
@@ -84,21 +99,44 @@ return function(state, mode, ...)
         
         if path ~= nil and string.len(path) > 0 then
           obj[path] = value
-          extend(state, path, value)
+          extend(state, path, value, set)
         end
       end
     end
+
+    -- Attach mapping to state
+    extend(state['_MAP'], mode, obj, set)
+
+  -- Takes the first vararg as the path and all subsequent args as an array of
+  -- values. Unless path is blank, the state is extended.
+  elseif mode == 'ADD' then
+    local path = select(1, ...)
+    local values = {}
+
+    if path ~= nil and string.len(path) > 0 then
+      for n = 2, select('#', ...) do
+        local val = select(n, ...)
+        table.insert(values, val)
+      end
+      obj[path] = values
+      extend(state, path, values, concat)
+    end
+
+    -- Attach mapping to state
+    for key, value in pairs(obj) do
+      state['_MAP'][mode] = state['_MAP'][mode] or {}
+      state['_MAP'][mode][key] = concat(state['_MAP'][mode][key], value)
+    end
+
+  -- Iterrate over each vararg and drop from the state
   elseif mode == 'DELETE' then
-    -- Iterrate over each vararg and drop from the state
     for i, path in ipairs({...}) do
       table.insert(obj, path)
       drop(state, path)
     end
+    -- Attach mapping to state
+    state['_MAP'][mode] = concat(state['_MAP'][mode], obj)
   end
-  
-  -- Attach mapping to state
-  state['_MAP'] = {}
-  state['_MAP'][mode] = obj
 
   return state
 end

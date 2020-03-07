@@ -8,7 +8,7 @@ defmodule Bitcom.MAPTest do
     }
   end
 
-  describe "SET without a state" do
+  describe "MAP SET" do
     test "must set simple key values", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["SET", "foo.bar", 1, "foo.baz", 2]}
       |> Operate.Cell.exec!(ctx.vm)
@@ -22,9 +22,7 @@ defmodule Bitcom.MAPTest do
       assert res["foo"]["bar"] == 1
       assert res["_MAP"]["SET"] == %{"foo.bar" => 1}
     end
-  end
 
-  describe "SET with a state" do
     test "must merge deep objects", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["SET", "foo.baz", "x", "foo.qux", "y"]}
       |> Operate.Cell.exec!(ctx.vm, state: %{"foo" => %{"bar" => 1, "baz" => 2}})
@@ -33,12 +31,33 @@ defmodule Bitcom.MAPTest do
     end
   end
 
-  describe "DELETE without a state" do
+  describe "MAP ADD" do
+    test "must set simple key values", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["ADD", "foo.bar", "baz", "bang", "qux", "quux"]}
+      |> Operate.Cell.exec!(ctx.vm)
+      assert res["foo"]["bar"] == ["baz", "bang", "qux", "quux"]
+      assert res["_MAP"]["ADD"] == %{"foo.bar" => ["baz", "bang", "qux", "quux"]}
+    end
+
+    test "must merge deep objects", ctx do
+      res = %Operate.Cell{op: ctx.op, params: ["ADD", "foo.bar", "qux", "quux"]}
+      |> Operate.Cell.exec!(ctx.vm, state: %{
+        "foo" => %{"bar" => ["baz", "bang"]},
+        "_MAP" => %{"ADD" => %{"foo.bar" => ["baz", "bang"]}}
+      })
+      assert res["foo"]["bar"] == ["baz", "bang", "qux", "quux"]
+      assert res["_MAP"]["ADD"] == %{"foo.bar" => ["baz", "bang", "qux", "quux"]}
+    end
+  end
+
+  describe "MAP DELETE" do
     test "must put mappings onto state", ctx do
       res = %Operate.Cell{op: ctx.op, params: ["DELETE", "foo.bar", "foo.baz"]}
-      |> Operate.Cell.exec!(ctx.vm)
+      |> Operate.Cell.exec!(ctx.vm, state: %{
+        "_MAP" => %{"DELETE" => ["existing"]}
+      })
       assert Map.keys(res) == ["_MAP"]
-      assert res["_MAP"]["DELETE"] == ["foo.bar", "foo.baz"]
+      assert res["_MAP"]["DELETE"] == ["existing", "foo.bar", "foo.baz"]
     end
 
     test "must delete exact mappings", ctx do
