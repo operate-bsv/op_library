@@ -9,7 +9,7 @@ the state at the given path.
         "foo.bar"
         "2"
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, path, index)
@@ -54,7 +54,7 @@ return function(state, path, index)
   if string.match(index, '^[0-9]+$') then
     index = math.floor(tonumber(index))
   else
-    index = table.unpack(string.unpack('I1', index))
+    index = string.unpack('I1', index)
   end
 
   local tape = agent.local_tape(tonumber(index))

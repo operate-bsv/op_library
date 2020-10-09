@@ -50,7 +50,7 @@ the signature against. The values can either be utf8 encoded or binary integers.
     #   ]
     # }
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, signature, pubkey, slice_idx, slice_len)
@@ -99,14 +99,14 @@ return function(state, signature, pubkey, slice_idx, slice_len)
   if string.match(slice_idx, '^[0-9]+$') then
     slice_idx = tonumber(slice_idx)
   else
-    slice_idx = table.unpack(string.unpack('I1', slice_idx))
+    slice_idx = string.unpack('I1', slice_idx)
   end
 
   -- Convert slice length to integer
   if string.match(slice_len, '^[0-9]+$') then
     slice_len = tonumber(slice_len)
   else
-    slice_len = table.unpack(string.unpack('I1', slice_len))
+    slice_len = string.unpack('I1', slice_len)
   end
 
   -- Get tape data, then iterate over tape data to build message for verification

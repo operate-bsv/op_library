@@ -39,14 +39,14 @@ attributes.
     #   type: "application/json",
     # }
 
-@version 0.1.2
+@version 0.1.3
 @author Libs
 ]]--
 return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_bin)
   state = state or {}
   local hash_algo = string.upper(hash_algo or '')
   local sig_algo = string.upper(sig_algo or '')
-  local idx_usize = table.unpack( string.unpack('I1', idx_usize) )
+  local idx_usize = string.unpack('I1', idx_usize)
   local indices = {}
   local message = ''
 
@@ -92,7 +92,7 @@ return function(state, hash_algo, sig_algo, address, signature, idx_usize, idx_b
     local fmt = '<I' .. idx_usize
     local i = 1
     while i <= string.len(idx_bin) do
-      idx, i = table.unpack( string.unpack(fmt, idx_bin, i) )
+      idx, i = string.unpack(fmt, idx_bin, i)
       table.insert(indices, idx)
     end
     haip.indices = indices

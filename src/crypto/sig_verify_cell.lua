@@ -49,7 +49,7 @@ signature against. The value can either be utf8 encoded or a binary integer.
     #   ]
     # }
 
-@version 0.1.0
+@version 0.1.1
 @author Libs
 ]]--
 return function(state, signature, pubkey, cell_idx)
@@ -93,9 +93,9 @@ return function(state, signature, pubkey, cell_idx)
 
   -- Convert cell index to integer
   if string.match(cell_idx, '^[0-9]+$') then
-    cell_idx = tonumber(cell_idx)
+    cell_idx = math.floor(tonumber(cell_idx))
   else
-    cell_idx = table.unpack(string.unpack('I1', cell_idx))
+    cell_idx = math.floor(string.unpack('I1', cell_idx))
   end
 
   -- Get cell data, then iterate over cell data to build message for verification

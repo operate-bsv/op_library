@@ -8,7 +8,7 @@ result. The current state is passed to the loaded tape.
       $REF
         "2"
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, index)
@@ -16,7 +16,7 @@ return function(state, index)
   if string.match(index, '^[0-9]+$') then
     index = math.floor(tonumber(index))
   else
-    index = table.unpack(string.unpack('I1', index))
+    index = string.unpack('I1', index)
   end
 
   local tape = agent.local_tape(index)

@@ -16,7 +16,7 @@ defmodule Operate.Library do
     [
       {:operate, "~> 0.1.0-beta"},
       {:luerl, github: "rvirding/luerl", branch: "develop", override: true},
-      {:tesla, "~> 1.2.1"}
+      {:tesla, "~> 1.3"}
     ]
   end
 end

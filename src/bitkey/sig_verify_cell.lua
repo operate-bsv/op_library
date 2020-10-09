@@ -49,7 +49,7 @@ verifies the signature against the hash, returning a boolean.
     #   ]
     # }
 
-@version 0.1.1
+@version 0.1.2
 @author Libs
 ]]--
 return function(state, signature, paymail, cell_idx)
@@ -88,9 +88,9 @@ return function(state, signature, paymail, cell_idx)
 
   -- Convert cell index to integer
   if string.match(cell_idx, '^[0-9]+$') then
-    cell_idx = tonumber(cell_idx)
+    cell_idx = math.floor(tonumber(cell_idx))
   else
-    cell_idx = table.unpack(string.unpack('I1', cell_idx))
+    cell_idx = math.floor(string.unpack('I1', cell_idx))
   end
 
   -- Get cell data, then iterate over cell data to build message for verification
